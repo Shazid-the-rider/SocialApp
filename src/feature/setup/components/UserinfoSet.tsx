@@ -1,170 +1,167 @@
 import { useFonts } from "expo-font";
-import { ActivityIndicator, Animated, Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Animated, Dimensions, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { customFonts } from "../../../utils/fonts";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { Entypo, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import useUserinfoSetHook from "../hooks/useUserinfoSetHook";
 
-const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 
 export default function UserinfoSet() {
-    const navigation = useNavigation();
-    const [fonts] = useFonts(customFonts);
-    if (!fonts) {
+    const context = useUserinfoSetHook();
+    if (!context) {
         return null;
     }
-    const headerAnim = useRef(new Animated.Value(0)).current;
-    const info1 = useRef(new Animated.Value(0)).current;
-    const info2 = useRef(new Animated.Value(0)).current;
-    const info3 = useRef(new Animated.Value(0)).current;
-    const info4 = useRef(new Animated.Value(0)).current;
-    const button = useRef(new Animated.Value(0)).current;
-    useEffect(() => {
-        Animated.parallel([
-            Animated.timing(headerAnim, {
-                toValue: 1,
-                duration: 2000,
-                useNativeDriver: true
-            }),
-            Animated.timing(info1, {
-                toValue: 1,
-                duration: 2000,
-                useNativeDriver: true
-            }),
-            Animated.timing(info2, {
-                toValue: 1,
-                duration: 2000,
-                useNativeDriver: true
-            }),
-            Animated.timing(info3, {
-                toValue: 1,
-                duration: 2000,
-                useNativeDriver: true
-            }),
-            Animated.timing(button, {
-                toValue: 1,
-                duration: 2000,
-                useNativeDriver: true
-            }),
-        ]).start()
+    const { firstName, setFirstName,
+        lastName, setLastName,
+        firstnameError, setFirstNameError,
+        lastnameError, setLastNameError,
+        blankError, setBlankError,
+        dob, setDob,
+        gender, setGender,
+        showDate, setShowDate,
+        showGender, setShowGender,
+        success, setSuccess,
+        navigation,
+        fonts,
+        headerAnim,
+        notificationpopup,
+        bottomSheetAnim,
+        bottomGenderAnim,
+        info1,
+        button,
+        PopUp,
+        popOut,
+        PopUpGender,
+        popOutGender,
+        notifypopout,
+        notifypopupAnim,
+        HandleSetUpInfo } = context
 
-    }, [])
     return (
-        <View style={styles.container}>
-            <View style={styles.infoContainer}>
+        <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); popOut(), popOutGender() }}>
+            <View className="flex-1 w-full bg-white items-center gap-[30px]">
+                <View className="gap-[20px] px-[20px]">
 
-                {/*HEADER*/}
+                    {/*HEADER*/}
 
-                <Animated.View style={[styles.headerContainer, { opacity: headerAnim }]}>
-                    <Text style={[styles.headerFont, { fontFamily: 'Poppins-Bold' }]}>Let's setup</Text>
-                    <Text style={[styles.headerFont, { fontFamily: 'Poppins-Bold' }]}>some information</Text>
+                    <Animated.View style={{ opacity: headerAnim }} className="pt-[50px] pb-[10px]">
+                        <Text style={{ fontFamily: 'Poppins-Bold' }} className="text-[32px]">Let's setup</Text>
+                        <Text style={{ fontFamily: 'Poppins-Bold' }} className="text-[32px]">some information</Text>
+                    </Animated.View>
+
+                    {/*FORM FIELD*/}
+
+                    <View className="w-full flex-row justify-between">
+                        <Animated.View style={{ opacity: info1 }} className="w-[47%] gap-[7px]">
+                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 15 }}>First name</Text>
+                            <TextInput placeholder="First Name" className="w-full border-[0.3px] border-[rgba(187,186,186,0.88)] rounded-[5px] p-[10px] text-[16px] font-['Poppins-Regular']" style={{ borderColor: 'rgba(187, 186, 186, 0.88)' }}
+                                onChangeText={(text) => setFirstName(text)}
+                                onFocus={() => popOut()}
+                            />
+                        </Animated.View>
+                        <Animated.View style={{ opacity: info1 }} className="w-[47%] gap-[7px]">
+                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 15 }}>Last name</Text>
+                            <TextInput placeholder="Last Name" className="w-full border-[0.3px] border-[rgba(187,186,186,0.88)] rounded-[5px] p-[10px] text-[16px] font-['Poppins-Regular']" style={{ borderColor: 'rgba(187, 186, 186, 0.88)' }}
+                                onChangeText={(text) => setLastName(text)}
+                                onFocus={() => popOut()}
+                            />
+                        </Animated.View>
+                    </View>
+                    <View className="w-full flex-row justify-between">
+                        <Animated.View style={{ opacity: info1 }} className="w-[47%] gap-[7px]">
+                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 15 }}>Date of Birth</Text>
+                            <TouchableOpacity className="w-full border-[0.3px] border-[rgba(187,186,186,0.88)] rounded-[5px] p-[10px] text-[16px] font-['Poppins-Regular']"
+                                style={{ borderColor: 'rgba(187, 186, 186, 0.88)' }}
+                                onPress={() => { setShowDate(true); Keyboard.dismiss(); popOutGender(); PopUp() }}
+                            >
+                                <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 16 }}>
+                                    {dob ? dob.toDateString() : "Select Date"}
+                                </Text>
+                            </TouchableOpacity>
+                        </Animated.View>
+                        <Animated.View style={{ opacity: info1 }} className="w-[47%] gap-[7px]">
+                            <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 15 }}>Gender</Text>
+                            <TouchableOpacity className="w-full border-[0.3px] border-[rgba(187,186,186,0.88)] rounded-[5px] p-[10px] text-[16px] font-['Poppins-Regular']"
+                                style={{ borderColor: 'rgba(187, 186, 186, 0.88)' }}
+                                onPress={() => { setShowGender(true); Keyboard.dismiss(); popOut(); PopUpGender() }}
+                            >
+                                <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 16 }}>
+                                    {gender ? gender : "Select Gender"}
+                                </Text>
+                            </TouchableOpacity>
+                        </Animated.View>
+                    </View>
+                </View>
+
+                {/*NEXT BUTTON*/}
+
+                <Animated.View style={{ opacity: button }}>
+                    <TouchableOpacity className="mt-[20px] p-[14px] bg-[rgba(19,1,71,1)] rounded-[30px] items-center" style={{ width: width / 1.1 }} activeOpacity={0.7}
+                        onPress={() => HandleSetUpInfo()}
+                    >
+                        <Text style={{ fontFamily: 'Poppins-Medium', color: 'white', fontSize: 17 }}>Next</Text>
+                    </TouchableOpacity>
                 </Animated.View>
 
-                {/*FORM FIELD*/}
+                {/*BOTTOM CALENDER FIELD*/}
 
-                <View style={styles.row}>
-                    <Animated.View style={[styles.input, { opacity: info1 }]}>
-                        <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 15 }}>First name</Text>
-                        <TextInput placeholder="First Name" style={[styles.inputField, { fontFamily: 'Poppins-Regular' }]} />
-                    </Animated.View>
-                    <Animated.View style={[styles.input, { opacity: info1 }]}>
-                        <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 15 }}>Last name</Text>
-                        <TextInput placeholder="Last Name" style={[styles.inputField, { fontFamily: 'Poppins-Regular' }]} />
-                    </Animated.View>
-                </View>
-                <View style={styles.row}>
-                    <Animated.View style={[styles.input, { opacity: info1 }]}>
-                        <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 15 }}>Date of Birth</Text>
-                        <TextInput placeholder="Date of Birth" style={[styles.inputField, { fontFamily: 'Poppins-Regular' }]} />
-                    </Animated.View>
-                    <Animated.View style={[styles.input, { opacity: info1 }]}>
-                        <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 15 }}>Gender</Text>
-                        <TextInput placeholder="Gender" style={[styles.inputField, { fontFamily: 'Poppins-Regular' }]} />
-                    </Animated.View>
-                </View>
+                {
+                    showDate && (<Animated.View className="absolute bg-white rounded-tl-[30px] rounded-tr-[30px] justify-center items-center flex shadow-[0px_4px_6px_rgba(0,0,0,0.25)] elevation-[5]" style={{ height: height / 1.8, width: width / 1.05, bottom: bottomSheetAnim }}>
+
+                        <TouchableOpacity className="h-[2px] w-[50px] bg-black"
+                            onPress={() => popOut()}
+                        >
+                        </TouchableOpacity>
+
+                        <DateTimePicker
+                            value={dob || new Date()}
+                            mode="date"
+                            display="inline"
+                            maximumDate={new Date()}
+                            style={{ height: '100%', width: '100%' }}
+                            onChange={(event, selectedDate) => setDob(selectedDate || dob)}
+                        />
+
+                    </Animated.View>)
+                }
+                {/*BOTTOM GENDER FIELD*/}
+                {
+                    showGender && (<Animated.View className="bg-white pb-[60px] absoulte rounded-tl-[30px] rounded-tr-[30px] flex justify-center items-center shadow-[0px_4px_6px_rgba(0,0,0,0.25)] elevation-[5]" style={{ height: height / 3, width: width / 1.05, bottom: bottomGenderAnim, gap: 30 }}>
+
+                        <TouchableOpacity className="h-[2px] w-[50px] bg-black"
+                            onPress={() => popOutGender()}
+                        >
+                        </TouchableOpacity>
+                        <View style={{ height: '60%', width: '100%', gap: 10 }}>
+                            <TouchableOpacity className="h-[30%] flex-row mx-[40px] justify-between items-center px-[10px]" onPress={() => setGender('Male')}>
+                                <Text className="text-[18px] font-['Poppins-Medium']">Male</Text>
+                                <View className="h-[17px] w-[17px] bg-white border border-black rounded-full" style={{ backgroundColor: gender === 'Male' ? 'black' : 'white' }}></View>
+                            </TouchableOpacity>
+                            <TouchableOpacity className="h-[30%] flex-row mx-[40px] justify-between items-center px-[10px]" onPress={() => setGender('Female')}>
+                                <Text className="text-[18px] font-['Poppins-Medium']">Female</Text>
+                                <View className="h-[17px] w-[17px] bg-white border border-black rounded-full" style={{ backgroundColor: gender === 'Female' ? 'black' : 'white' }}></View>
+                            </TouchableOpacity>
+                            <TouchableOpacity className="h-[30%] flex-row mx-[40px] justify-between items-center px-[10px]" onPress={() => setGender('None')}>
+                                <Text className="text-[18px] font-['Poppins-Medium']">None</Text>
+                                <View className="h-[17px] w-[17px] bg-white border border-black rounded-full" style={{ backgroundColor: gender === 'None' ? 'black' : 'white' }}></View>
+                            </TouchableOpacity>
+                        </View>
+                    </Animated.View>)
+                }
+                <Animated.View className="absolute bottom-0 h-[60px] bg-white rounded-[12px] flex-row items-center justify-center gap-[10px] shadow-lg" style={{ bottom: notificationpopup, width: width / 1.07 }}>
+                    {(blankError || firstnameError || lastnameError) && <MaterialIcons name="error" size={24} color="red" />}
+                    {success && <FontAwesome5 name="check-circle" size={24} color="green" />}
+                    {success && <Text numberOfLines={2} style={{ fontFamily: 'Poppins-Medium', fontSize: 14, }}>{success}</Text>}
+                    {blankError && <Text numberOfLines={2} style={{ fontFamily: 'Poppins-Medium', fontSize: 14, }}>{blankError}</Text>}
+                    {firstnameError && <Text numberOfLines={2} style={{ fontFamily: 'Poppins-Medium', fontSize: 14, }}>{firstnameError}</Text>}
+                    {lastnameError && <Text numberOfLines={2} style={{ fontFamily: 'Poppins-Medium', fontSize: 14, }}>{lastnameError}</Text>}
+                </Animated.View>
             </View>
-
-            {/*<View style={styles.alertbox}>
-                <ActivityIndicator size={"large"} color={'rgba(0, 0, 0, 1)'} />
-                <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 19, color: 'rgba(53, 53, 53, 0.8)' }} >Setting up</Text>
-            </View>*/}
-
-
-            {/*NEXT BUTTON*/}
-
-            <AnimatedTouchable style={[styles.nextbutton, { opacity: button }]} activeOpacity={0.7}
-            onPress={()=>navigation.navigate('SetupImage'as never)}
-            >
-                <Text style={{ fontFamily: 'Poppins-Medium', color: 'white', fontSize: 17 }}>Next</Text>
-            </AnimatedTouchable>
-
-        </View>
+        </TouchableWithoutFeedback>
     )
 }
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        width: width,
-        backgroundColor: 'white',
-        gap: 30,
-        alignItems: 'center'
-    },
-    row: {
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    input: {
-        width: '47%',
-        gap: 7
-    },
-    inputField: {
-        width: '100%',
-        borderWidth: .3,
-        borderColor: 'rgba(187, 186, 186, 0.88)',
-        borderRadius: 5,
-        padding: 10,
-        fontSize: 16
-    },
-    headerContainer: {
-        paddingTop: 50,
-        paddingBottom: 10
-    },
-    headerFont: {
-        fontSize: 32
-    },
-    alertbox: {
-        position: 'absolute',
-        width: width / 1.2,
-        top: '50%',
-        left: '50%',
-        transform: [{ translateX: '-50%' }, { translateY: '-50%' }],
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 10,
-        backgroundColor: 'rgba(255, 255, 255, 1)',
-        borderRadius: 20,
-        padding: 40,
-        alignItems: 'center',
-        justifyContent: 'center',
 
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 4,
-    },
-    infoContainer: {
-        gap: 20,
-        paddingLeft: 20,
-        paddingRight: 20
-    },
-    nextbutton: {
-        marginTop: 20,
-        width: width / 1.1,
-        padding: 14,
-        backgroundColor: 'rgba(19, 1, 71, 1)',
-        borderRadius: 30,
-        alignItems: 'center'
-    }
-})
