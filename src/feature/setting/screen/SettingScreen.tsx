@@ -4,24 +4,15 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import useSettingScreenHook from "../hooks/useSettingScreenHook";
 
 export default function SettingScreen(){
-    const {HandleLogOut} = useSettingScreenHook();
+    const {HandleLogOut,darkMode} = useSettingScreenHook();
+
     return(
        <SafeAreaProvider>
-        <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
+        <SafeAreaView className={darkMode?"flex-1 bg-black":"flex-1 bg-white"}>
+        <View className={darkMode?"flex-1 bg-black":"flex-1 bg-white"}>
             <SettingPageComponents HandleLogOut={HandleLogOut}/>
         </View>
         </SafeAreaView>
        </SafeAreaProvider>
     )
 }
-const styles= StyleSheet.create({
-    container:{
-        flex:1,
-        backgroundColor:'white'
-    },
-    safeArea:{
-        flex:1,
-        backgroundColor:'white'
-    }
-})

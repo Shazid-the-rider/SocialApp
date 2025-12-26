@@ -41,7 +41,9 @@ export type GlobalContextType = {
     searchUserInfo: NewUserModel|undefined;
     searchUserpost: PostType[];
     owner:string;
-    setOwner:(val:string)=>void
+    setOwner:(val:string)=>void;
+    darkMode:boolean;
+    setDarkMode:(val:boolean)=>void
 };
 
 export type AllPostType = {

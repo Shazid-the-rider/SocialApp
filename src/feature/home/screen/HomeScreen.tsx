@@ -16,7 +16,7 @@ export default function HomeScreen() {
     if (!context) {
         return undefined;
     }
-    const { searchUserUid, likedPost, LikePosts, search_User_And_Find_its_Info, search_User_And_Find_its_Post, searchUserInfo, searchUserpost, owner } = context;
+    const { darkMode, searchUserUid, likedPost, LikePosts, search_User_And_Find_its_Info, search_User_And_Find_its_Post, searchUserInfo, searchUserpost, owner } = context;
     useEffect(() => {
         if (searchUserUid) {
             search_User_And_Find_its_Info(searchUserUid);
@@ -29,11 +29,12 @@ export default function HomeScreen() {
             console.log(filterdData)
             setFilterData(filterdData);
         }
-    }, [postType])
+    }, [searchUserpost, postType])
+
     return (
         <SafeAreaProvider>
-            <SafeAreaView className="flex-1 bg-white">
-                <View className="flex-1 bg-white items-center">
+            <SafeAreaView className={darkMode ? "flex-1 bg-black" : "flex-1 bg-white"}>
+                <View className={darkMode ? "flex-1 bg-black items-center" : "flex-1 bg-white items-center"}>
                     <ProfileTitle />
                     <HomeComponents setVisible={setVisible} />
                     {
@@ -42,32 +43,32 @@ export default function HomeScreen() {
                                 visible={visible}
                                 transparent
                             >
-                                <View className="w-[100%] h-[86.5%] bg-white absolute bottom-0 justify-center items-center px-[20px] gap-[10]">
-                                    <ScrollView className="w-[100%]">
+                                <View className={darkMode ? "w-[100%] h-[86.5%] bg-black absolute bottom-0 justify-center items-center px-[20px] gap-[10]" : "w-[100%] h-[86.5%] bg-white absolute bottom-0 justify-center items-center px-[20px] gap-[10]"}>
+                                    <ScrollView className="w-[100%]" showsVerticalScrollIndicator={false}>
                                         <View className="w-[100%] justify-center items-center">
                                             <View>
                                                 <Image source={{ uri: searchUserInfo?.image }} className="h-[200px] w-[200px] rounded-full" />
                                             </View>
-                                            <View className="w-[100%] flex-row gap-[3] items-center justify-center">
-                                                <Text className="text-[19px] font-[Poppins-Medium]">{searchUserInfo?.firstName} {searchUserInfo?.lastName}</Text>
+                                            <View className="w-[100%] flex-row gap-[3] items-center justify-center mt-[20px]">
+                                                <Text className={darkMode ? "text-[19px] font-[Poppins-Medium] text-[white]" : "text-[19px] font-[Poppins-Medium]"}>{searchUserInfo?.firstName} {searchUserInfo?.lastName}</Text>
                                                 <MaterialIcons name="verified" size={24} color="blue" />
                                             </View>
                                             <View className="w-[90%] flex-row justify-between pt-[15px]">
                                                 <View className="items-center w-[100%/3]">
-                                                    <Text className="text-[30px] font-[Poppins-SemiBold]">{searchUserInfo?.follower}</Text>
-                                                    <Text className="text-[16px] font-[Poppins-Medium]">Followers</Text>
+                                                    <Text className={darkMode ? "text-[30px] font-[Poppins-SemiBold] text-[white]" : "text-[30px] font-[Poppins-SemiBold]"}>{searchUserInfo?.follower}</Text>
+                                                    <Text className={darkMode ? "text-[16px] font-[Poppins-Medium] text-[white]" : "text-[16px] font-[Poppins-Medium]"}>Followers</Text>
                                                 </View>
                                                 <View className="items-center w-[100%/3]">
-                                                    <Text className="text-[30px] font-[Poppins-SemiBold]">{searchUserInfo?.follower}</Text>
-                                                    <Text className="text-[16px] font-[Poppins-Medium]">Following</Text>
+                                                    <Text className={darkMode ? "text-[30px] font-[Poppins-SemiBold] text-[white]" : "text-[30px] font-[Poppins-SemiBold]"}>{searchUserInfo?.follower}</Text>
+                                                    <Text className={darkMode ? "text-[16px] font-[Poppins-Medium] text-[white]" : "text-[16px] font-[Poppins-Medium]"}>Following</Text>
                                                 </View>
                                                 <View className="items-center w-[100%/3]">
-                                                    <Text className="text-[30px] font-[Poppins-SemiBold]">{searchUserInfo?.uploadpost}</Text>
-                                                    <Text className="text-[16px] font-[Poppins-Medium]">Posts</Text>
+                                                    <Text className={darkMode ? "text-[30px] font-[Poppins-SemiBold] text-[white]" : "text-[30px] font-[Poppins-SemiBold]"}>{searchUserInfo?.uploadpost}</Text>
+                                                    <Text className={darkMode ? "text-[16px] font-[Poppins-Medium] text-[white]" : "text-[16px] font-[Poppins-Medium]"}>Posts</Text>
                                                 </View>
                                             </View>
                                             <View className="w-[100%] flex-row justify-between mb-[15px] mt-[25px]">
-                                                <TouchableOpacity className="w-[45%] bg-black justify-center items-center py-[10px] rounded-xl flex-row gap-[5]">
+                                                <TouchableOpacity className={darkMode ? "w-[45%] bg-red-500 justify-center items-center py-[10px] rounded-xl flex-row gap-[5]" : "w-[45%] bg-black justify-center items-center py-[10px] rounded-xl flex-row gap-[5]"}>
                                                     <Ionicons name="notifications" size={20} color="white" />
                                                     <Text className="text-[16px] font-[Poppins-Medium] text-[white]">Follow</Text>
                                                 </TouchableOpacity>
@@ -94,24 +95,24 @@ export default function HomeScreen() {
                                             </View>
                                             {
                                                 filterdata && (
-                                                    <View className="w-[100%]">
+                                                    <View className={darkMode ? "w-[100%] bg-black" : "w-[100%] bg-white"}>
                                                         {
                                                             filterdata.map((item, index) => {
                                                                 const jsDate = item.createdAt ? item.createdAt instanceof Timestamp ? item.createdAt.toDate() : item.createdAt : undefined;
                                                                 return (
-                                                                    <View key={index} className="w-[100%] bg-white shadow-sm pb-[5px] pt-[20px] h-[auto] my-[10px] rounded-2xl">
-                                                                        <View className="flex-row gap-[10] justify-start px-[6px] mb-[0px]">
+                                                                    <View key={index} className={darkMode ? "w-[100%] bg-[#2525255c] shadow-sm pb-[5px] pt-[20px] h-[auto] my-[10px] rounded-2xl" : "w-[100%] bg-[white] shadow-sm pb-[5px] pt-[20px] h-[auto] my-[10px] rounded-2xl"}>
+                                                                        <View className={darkMode ? "flex-row gap-[10] bg-[black] justify-start px-[6px] mb-[0px]" : "flex-row bg-[white] gap-[10] justify-start px-[6px] mb-[0px]"}>
                                                                             <View>
                                                                                 <Image source={{ uri: searchUserInfo?.image }} className="h-[40px] w-[40px] rounded-full" />
                                                                             </View>
                                                                             <View>
                                                                                 <View className="flex-row items-center gap-[10]">
-                                                                                    <Text className="font-[Poppins-SemiBold] text-[14px]">{searchUserInfo?.firstName} {searchUserInfo?.lastName}</Text>
+                                                                                    <Text className={darkMode ? "font-[Poppins-SemiBold] text-[14px] text-[white]" : "font-[Poppins-SemiBold] text-[14px]"}>{searchUserInfo?.firstName} {searchUserInfo?.lastName}</Text>
                                                                                     <MaterialIcons name="verified" size={15} color="blue" />
                                                                                 </View>
                                                                                 <View className="flex-row gap-[10] items-center pb-[15px]">
-                                                                                    <Text className="font-[Poppins-SemiBold] text-[12px]">{jsDate?.toLocaleDateString([], { weekday: 'short', month: 'short', year: '2-digit', day: '2-digit' }).replace(/,/g, '')}</Text>
-                                                                                    <Text className="font-[Poppins-Medium] text-[12px]">{jsDate?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+                                                                                    <Text className={darkMode ? "font-[Poppins-SemiBold] text-[12px] text-[white]" : "font-[Poppins-SemiBold] text-[12px]"}>{jsDate?.toLocaleDateString([], { weekday: 'short', month: 'short', year: '2-digit', day: '2-digit' }).replace(/,/g, '')}</Text>
+                                                                                    <Text className={darkMode ? "font-[Poppins-Medium] text-[12px] text-[white]" : "font-[Poppins-Medium] text-[12px]"}>{jsDate?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
                                                                                     <FontAwesome name="globe" size={17} color="grey" />
                                                                                 </View>
                                                                             </View>
@@ -119,7 +120,7 @@ export default function HomeScreen() {
                                                                         {
                                                                             item.des && (
                                                                                 <View className="mb-[5px] mt-[15px]">
-                                                                                    <Text className={item?.des ? (item.des && item.des.length > 100) ? "font-[Poppins-Medium] text-[16px]" : "font-[Poppins-Medium] text-[22px]" : postType === 'photo' ? "font-[Poppins-Medium] text-[13px]" : "font-[Poppins-Medium] text-[18px]"}>{item.des}</Text>
+                                                                                    <Text className={darkMode ? item?.des ? (item.des && item.des.length > 100) ? "font-[Poppins-Medium] text-[white] text-[16px]" : "font-[Poppins-Medium] text-[white] text-[22px]" : postType === 'photo' ? "font-[Poppins-Medium] text-[13px]" : "font-[Poppins-Medium] text-[18px]" : item?.des ? (item.des && item.des.length > 100) ? "font-[Poppins-Medium] text-[16px]" : "font-[Poppins-Medium] text-[22px]" : postType === 'photo' ? "font-[Poppins-Medium] text-[13px]" : "font-[Poppins-Medium] text-[18px]"}>{item.des}</Text>
                                                                                 </View>
                                                                             )
                                                                         }
@@ -132,12 +133,12 @@ export default function HomeScreen() {
                                                                         }
                                                                         <View className="flex-row gap-[30]  mx-[10px] py-[20px]">
                                                                             <TouchableOpacity className="flex-row gap-[10] items-center" activeOpacity={1} onPress={() => LikePosts(item.id)}>
-                                                                                <MaterialCommunityIcons name="cards-heart" size={24} color={likedPost.includes(item.id) ? "red" : 'black'} />
-                                                                                <Text className="font-[Poppins-SemiBold] text-[16px]">{item.like}</Text>
+                                                                                <MaterialCommunityIcons name="cards-heart" size={24} color={likedPost.includes(item.id) ? "red" : darkMode ? 'white' : 'black'} />
+                                                                                <Text className={darkMode ? "font-[Poppins-SemiBold] text-[white] text-[16px]" : "font-[Poppins-SemiBold] text-[16px]"}>{item.like}</Text>
                                                                             </TouchableOpacity>
                                                                             <View className="flex-row gap-[10] items-center">
-                                                                                <MaterialCommunityIcons name="comment-multiple" size={24} color="black" />
-                                                                                <Text className="font-[Poppins-SemiBold] text-[16px]">{item.comment}</Text>
+                                                                                <MaterialCommunityIcons name="comment-multiple" size={24} color={darkMode ? 'white' : "black"} />
+                                                                                <Text className={darkMode ? "font-[Poppins-SemiBold] text-[16px] text-[white]" : "font-[Poppins-SemiBold] text-[16px]"}>{item.comment}</Text>
                                                                             </View>
                                                                         </View>
                                                                     </View>
@@ -149,6 +150,13 @@ export default function HomeScreen() {
                                                 )
                                             }
                                         </View>
+                                        {
+                                            filterdata.length === 0 && (
+                                                <View className="h-[120px] w-[100%] justify-center items-center">
+                                                    <Text className="font-[Poppins-Medium] text-[15px]">No File available</Text>
+                                                </View>
+                                            )
+                                        }
                                     </ScrollView>
                                 </View>
 

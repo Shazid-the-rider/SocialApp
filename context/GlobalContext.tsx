@@ -3,7 +3,7 @@ import { AuthContext } from "./AuthContext";
 import { arrayRemove, arrayUnion, collection, doc, getDoc, getDocs, increment, onSnapshot, orderBy, query, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
 import { db } from "../shared/services/firebaseConfig";
 import { AllPostType, GlobalContextType, NewUserModel, PostType } from "../type/typeCast";
-import {fetchPostsAndRelatedUserWIthMapping, fetchPostsOfSearchUser, refreshNewsFeed, userInfoFetchAndRealTimeUpdate } from "../shared/services/firebaseCrudService";
+import { fetchPostsAndRelatedUserWIthMapping, refreshNewsFeed, userInfoFetchAndRealTimeUpdate } from "../shared/services/firebaseCrudService";
 
 
 export const GlobalContextApi =
@@ -13,6 +13,7 @@ export const GlobalContext: React.FC<{ children: ReactNode }> = ({ children }) =
   const [newUser, setNewUser] = useState<NewUserModel | undefined>(undefined);
   const [currentUser, setCurrentuser] = useState<NewUserModel | undefined>(undefined); // loggedin user
   const [searchUserInfo, setSearchUserInfo] = useState<NewUserModel | undefined>(undefined);
+  const [darkMode, setDarkMode] = useState<boolean>(false);
   const [searchUserpost, setSearchUserPost] = useState<PostType[]>([]);
   const [searchUserUid, setSearchUserUid] = useState<string>("");
   const { user } = useContext(AuthContext);
@@ -20,14 +21,13 @@ export const GlobalContext: React.FC<{ children: ReactNode }> = ({ children }) =
   const [Allposts, setPosts] = useState<PostType[]>([]);
   const [loading, setLoading] = useState(false);
   const [likedPost, setLikedPost] = useState<string[]>([]);
-  const [owner,setOwner]= useState<string>("");
+  const [owner, setOwner] = useState<string>("");
 
-  const unsubscribeRef = useRef<()=>void|null>(null);
+  const unsubscribeRef = useRef<() => void | null>(null);
 
   const toggleAction = (id: string) => {
     setAction(id);
   }
-
   //Current Logged in userInfromation when login or signup dynamic Fetching
 
   useEffect(() => {
@@ -46,9 +46,9 @@ export const GlobalContext: React.FC<{ children: ReactNode }> = ({ children }) =
     }
   }, [user])
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(owner)
-  },[owner])
+  }, [owner])
   //Fetch userPosts with userInformation (two table -- (posts)-->post.uid--->to (users))
 
   useEffect(() => {
@@ -126,34 +126,31 @@ export const GlobalContext: React.FC<{ children: ReactNode }> = ({ children }) =
       setSearchUserInfo(userData);
     }
   }
-  const search_User_And_Find_its_Post = async (userid: string) => {
-    /*try {
-      const postRef = collection(db, "Posts");
-      const q = query(postRef, where("uuid", "==", userid), orderBy("createdAt", "desc"));
-      const snapshots = await getDocs(q);
-      if (snapshots.docs) {
-        let postList: PostType[] = [];
-        snapshots.docs.forEach((snap) => {
-          const post = snap.data() as PostType;
-          postList.push(post);
-        });
-        setSearchUserPost(postList);
-      }
-
-    } catch (error) {
-      console.log(error)
-    }*/
-   if(unsubscribeRef.current){
-    return;
-   }
-   unsubscribeRef.current = fetchPostsOfSearchUser(setPosts,userid);
-
+  // Real-time listener for searched user's posts
+  const search_User_And_Find_its_Post = (userid: string) => {
+    // Remove previous listener if any
+    if (unsubscribeRef.current) {
+      unsubscribeRef.current();
+      unsubscribeRef.current = null;
+    }
+    // Set up real-time listener
+    const postRef = collection(db, "Posts");
+    const q = query(postRef, where("uuid", "==", userid), orderBy("createdAt", "desc"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      let postList: PostType[] = [];
+      snapshot.docs.forEach((snap) => {
+        const post = snap.data() as PostType;
+        postList.push(post);
+      });
+      setSearchUserPost(postList);
+    });
+    unsubscribeRef.current = unsubscribe;
   }
 
   return (
     <GlobalContextApi.Provider value={{
-      likedPost, LikePosts, loading, refreshPost, Allposts, newUser, setNewUser, actionlog, toggleAction, currentUser, searchUserUid, setSearchUserUid,
-      search_User_And_Find_its_Info, search_User_And_Find_its_Post, searchUserInfo, searchUserpost,owner,setOwner
+      likedPost, LikePosts, loading, darkMode, setDarkMode, refreshPost, Allposts, newUser, setNewUser, actionlog, toggleAction, currentUser, searchUserUid, setSearchUserUid,
+      search_User_And_Find_its_Info, search_User_And_Find_its_Post, searchUserInfo, searchUserpost, owner, setOwner
     }}>
       {children}
     </GlobalContextApi.Provider>

@@ -7,7 +7,7 @@ import SplashScreen from './src/feature/splash/screen/SplashScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import UserprofileimageScreen from './src/feature/setup/screen/UserprofileimageScreen';
 import { NavigationContainer } from '@react-navigation/native';
-import { GlobalContext } from './context/GlobalContext';
+import { GlobalContext, GlobalContextApi } from './context/GlobalContext';
 import { AuthContext } from './context/AuthContext';
 import { PropsWithChildren, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
@@ -31,8 +31,8 @@ interface AuthStackProps {
   user: User | null;
 }
 function BottomStack() {
-  const context = Colors();
-  const { blue } = context;
+  const context = useContext(GlobalContextApi);
+  const {darkMode}= context;
   
   return (
     <Tab.Navigator initialRouteName='Home'
@@ -52,8 +52,8 @@ function BottomStack() {
 
           return <Ionicons name={iconName as any} size={size} color={color} />;
         },
-        tabBarActiveTintColor: blue,
-        tabBarInactiveTintColor: 'black',
+        tabBarActiveTintColor: darkMode?'white':'black',
+        tabBarInactiveTintColor:darkMode?'grey': 'black',
         headerShown: false,
         tabBarStyle:{
           position: 'absolute',
@@ -66,9 +66,8 @@ function BottomStack() {
           alignItems: 'center',
           borderRadius: 50,
           borderWidth: 0,
-          borderColor: 'white',
-          backgroundColor: 'white',
-
+          borderColor: darkMode?'none':'white',
+          backgroundColor: darkMode?'rgb(40,40,40)':'white',
           shadowColor: "#2c2b2bff",
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.25,

@@ -2,9 +2,13 @@ import { signOut } from "firebase/auth";
 import { Alert } from "react-native";
 import { auth } from "../../../../shared/services/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
+import { useContext } from "react";
+import { GlobalContextApi } from "../../../../context/GlobalContext";
 
 export default function useSettingScreenHook() {
     const navigation = useNavigation();
+    const context = useContext(GlobalContextApi);
+    const {darkMode}= context;
     const HandleLogOut = async () => {
         Alert.alert("Confirm Logout", "Are you sure you want to log out?", [
             {
@@ -26,5 +30,5 @@ export default function useSettingScreenHook() {
             },
         ]);
     }
-    return { HandleLogOut }
+    return { HandleLogOut,darkMode }
 }

@@ -48,21 +48,6 @@ export const fetchPostsAndRelatedUserWIthMapping = (setPosts: (val: AllPostType[
   return unsubscribe;
 }
 
-export const fetchPostsOfSearchUser = (setPosts: (val: PostType[]) => void, userid: string) => {
-  const postRef = collection(db, "Posts");
-  const q = query(postRef, where("uuid", "==", userid), orderBy("createdAt", "desc"));
-  const unsubscribe = onSnapshot(q, async (snapshot) => {
-    const postsData: PostType[] = await Promise.all(
-      snapshot.docs.map(async (docSnap) => {
-        const post = docSnap.data() as PostType;
-        return { ...post } as PostType;
-      })
-    );
-
-    setPosts(postsData);
-  });
-  return unsubscribe;
-}
 
 
 export const refreshNewsFeed = async (setLoading: (val: boolean) => void, setPosts: (val: AllPostType[]) => void) => {

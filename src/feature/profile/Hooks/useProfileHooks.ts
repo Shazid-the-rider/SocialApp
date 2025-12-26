@@ -243,7 +243,7 @@ export default function useProfileHooks() {
     if (!context) {
         return null;
     }
-    const { currentUser,likedPost,LikePosts } = context;
+    const { currentUser,likedPost,LikePosts, darkMode } = context;
 
     //Delete post from social Media 
 
@@ -268,7 +268,7 @@ export default function useProfileHooks() {
     }
 
     return {
-        user, postType, setPostType, selectedImage, setSelectedImage, des, setDes, selectedImageUrl, setSelectedImageUrl, status, setStatus,
+        darkMode,user, postType, setPostType, selectedImage, setSelectedImage, des, setDes, selectedImageUrl, setSelectedImageUrl, status, setStatus,
         type, setType, message, setMessage, focus, setFocus, posts, setPosts, viewImage, setViewImage, fonts, notify,
         currentUser, notifyPopUp, notifyPopOut, PickFile, UploadPost, postUid, setPostUid, selectedPost, setSelectedPost, HandlePostDelete, EditPostAnim,
         currentStatus, setCurrentStatus, PostModalPopUp, PostModalPopOut, createPostModal, EditProfileModalPopUp, EditProfileModalPopOut, 

@@ -21,9 +21,10 @@ type PostViewProps = {
     OptionModalPopUp: () => void
     likedPost: string[]
     LikePosts: (id: string) => Promise<void>
+    darkMode: boolean;
 }
 
-export const PostView = React.memo(({ LikePosts, likedPost, OptionModalPopUp, EditViewImageModalPopUp, setCurrentStatus, EditPostModalPopUp, currentUser, posts, setViewImage, HandlePostDelete, setSelectedImageUrl, setPostUid, setSelectedPost }: PostViewProps) => {
+export const PostView = React.memo(({ darkMode, LikePosts, likedPost, OptionModalPopUp, EditViewImageModalPopUp, setCurrentStatus, EditPostModalPopUp, currentUser, posts, setViewImage, HandlePostDelete, setSelectedImageUrl, setPostUid, setSelectedPost }: PostViewProps) => {
 
     return (
         <View className="flex-1 relative">
@@ -35,19 +36,19 @@ export const PostView = React.memo(({ LikePosts, likedPost, OptionModalPopUp, Ed
                                 posts.map((item, index) => {
                                     const jsDate = item.createdAt ? item.createdAt instanceof Timestamp ? item.createdAt.toDate() : item.createdAt : undefined;
                                     return (
-                                        <TouchableOpacity key={index} className="w-[100%] bg-white shadow-sm pb-[0px] pt-[20px] h-[auto] my-[10px] rounded-2xl" activeOpacity={.9} onPress={() => { setSelectedPost(item); setPostUid(item.id); setSelectedImageUrl(item.imgurl!); EditViewImageModalPopUp() }}>
+                                        <TouchableOpacity key={index} className={darkMode ? "w-[100%] bg-[#2525255c] shadow-sm pb-[0px] pt-[20px] h-[auto] my-[10px] rounded-2xl" : "w-[100%] bg-white shadow-sm pb-[0px] pt-[20px] h-[auto] my-[10px] rounded-2xl"} activeOpacity={.9} onPress={() => { setSelectedPost(item); setPostUid(item.id); setSelectedImageUrl(item.imgurl!); EditViewImageModalPopUp() }}>
                                             <View className="flex-row gap-[10] justify-start px-[6px] mb-[15px]">
                                                 <View>
                                                     <Image source={{ uri: currentUser?.image }} className="h-[40px] w-[40px] rounded-full" />
                                                 </View>
                                                 <View>
                                                     <View className="flex-row items-center gap-[10]">
-                                                        <Text className="font-[Poppins-SemiBold] text-[14px]">{currentUser?.firstName} {currentUser?.lastName}</Text>
+                                                        <Text className={darkMode ? "font-[Poppins-SemiBold] text-[white] text-[14px]" : "font-[Poppins-SemiBold] text-[14px]"}>{currentUser?.firstName} {currentUser?.lastName}</Text>
                                                         <MaterialIcons name="verified" size={15} color="blue" />
                                                     </View>
                                                     <View className="flex-row gap-[10] items-center pb-[15px]">
-                                                        <Text className="font-[Poppins-SemiBold] text-[12px]">{jsDate?.toLocaleDateString([], { weekday: 'short', month: 'short', year: '2-digit', day: '2-digit' }).replace(/,/g, '')}</Text>
-                                                        <Text className="font-[Poppins-Medium] text-[12px]">{jsDate?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+                                                        <Text className={darkMode ? "font-[Poppins-SemiBold] text-[white] text-[12px]" : "font-[Poppins-SemiBold] text-[12px]"}>{jsDate?.toLocaleDateString([], { weekday: 'short', month: 'short', year: '2-digit', day: '2-digit' }).replace(/,/g, '')}</Text>
+                                                        <Text className={darkMode ? "font-[Poppins-Medium] text-[white] text-[12px]" : "font-[Poppins-Medium] text-[12px]"}>{jsDate?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
                                                         <FontAwesome name="globe" size={17} color="grey" />
                                                     </View>
                                                 </View>
@@ -57,12 +58,12 @@ export const PostView = React.memo(({ LikePosts, likedPost, OptionModalPopUp, Ed
                                             </View>
                                             <View className="flex-row gap-[30]  mx-[10px] py-[20px]">
                                                 <TouchableOpacity className="flex-row gap-[10] items-center" activeOpacity={1} onPress={() => LikePosts(item.id)}>
-                                                    <MaterialCommunityIcons name="cards-heart" size={24} color={likedPost.includes(item.id) ? "red" : 'black'} />
-                                                    <Text className="font-[Poppins-SemiBold] text-[16px]">{item.like}</Text>
+                                                    <MaterialCommunityIcons name="cards-heart" size={24} color={likedPost.includes(item.id) ? "red" : darkMode ? 'white' : 'black'} />
+                                                    <Text className={darkMode ? "font-[Poppins-SemiBold] text-[white] text-[16px]" : "font-[Poppins-SemiBold] text-[16px]"}>{item.like}</Text>
                                                 </TouchableOpacity>
                                                 <View className="flex-row gap-[10] items-center">
-                                                    <MaterialCommunityIcons name="comment-multiple" size={24} color="black" />
-                                                    <Text className="font-[Poppins-SemiBold] text-[16px]">{item.comment}</Text>
+                                                    <MaterialCommunityIcons name="comment-multiple" size={24} color={darkMode ? "white" : "black"} />
+                                                    <Text className={darkMode ? "font-[Poppins-SemiBold] text-[16px] text-[white]" : "font-[Poppins-SemiBold] text-[16px]"}>{item.comment}</Text>
                                                 </View>
                                             </View>
                                         </TouchableOpacity>
@@ -88,34 +89,34 @@ export const PostView = React.memo(({ LikePosts, likedPost, OptionModalPopUp, Ed
                                 posts.map((item, index) => {
                                     const jsDate = item.createdAt ? item.createdAt instanceof Timestamp ? item.createdAt.toDate() : item.createdAt : undefined;
                                     return (
-                                        <TouchableOpacity key={index} className="px-[15px] h-[auto] bg-white  my-[10px] rounded-3xl mt-[20px] pb-[20px] pt-[30px] shadow-sm" activeOpacity={.9} onLongPress={() => { setCurrentStatus(item?.des!); setPostUid(item.id); OptionModalPopUp() }}>
+                                        <TouchableOpacity key={index} className={darkMode ? "px-[15px] pb-[20px] w-[100%] bg-[#2525255c] shadow-sm pt-[20px] h-[auto] my-[10px] rounded-2xl" : "w-[100%] pb-[20px] bg-white shadow-sm  pt-[20px] h-[auto] my-[10px] rounded-2xl"} activeOpacity={.9} onLongPress={() => { setCurrentStatus(item?.des!); setPostUid(item.id); OptionModalPopUp() }}>
                                             <View className="flex-row gap-[10] justify-start">
                                                 <View>
                                                     <Image source={{ uri: currentUser?.image }} className="h-[40px] w-[40px] rounded-full" />
                                                 </View>
                                                 <View>
                                                     <View className="flex-row items-center gap-[10]">
-                                                        <Text className="font-[Poppins-SemiBold] text-[14px]">{currentUser?.firstName} {currentUser?.lastName}</Text>
+                                                        <Text className={darkMode ? "font-[Poppins-SemiBold] text-[white] text-[14px]" : "font-[Poppins-SemiBold] text-[14px]"}>{currentUser?.firstName} {currentUser?.lastName}</Text>
                                                         <MaterialIcons name="verified" size={15} color="blue" />
                                                     </View>
                                                     <View className="flex-row gap-[10] items-center pb-[15px]">
-                                                        <Text className="font-[Poppins-SemiBold] text-[12px]">{jsDate?.toLocaleDateString([], { weekday: 'short', month: 'short', year: '2-digit', day: '2-digit' }).replace(/,/g, '')}</Text>
-                                                        <Text className="font-[Poppins-Medium] text-[12px]">{jsDate?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+                                                        <Text className={darkMode ? "font-[Poppins-SemiBold] text-[12px] text-[white]" : "font-[Poppins-SemiBold] text-[12px]"}>{jsDate?.toLocaleDateString([], { weekday: 'short', month: 'short', year: '2-digit', day: '2-digit' }).replace(/,/g, '')}</Text>
+                                                        <Text className={darkMode ? "font-[Poppins-Medium] text-[12px] text-[white]" : "font-[Poppins-Medium] text-[12px]"}>{jsDate?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
                                                         <FontAwesome name="globe" size={17} color="grey" />
                                                     </View>
                                                 </View>
                                             </View>
                                             <View className="mb-[20px] mt-[15px]">
-                                                <Text className={item?.des ? (item.des && item.des.length > 100) ? "font-[Poppins-Medium] text-[16px]" : "font-[Poppins-Medium] text-[22px]" : "font-[Poppins-Medium] text-[18px]"}>{item.des}</Text>
+                                                <Text className={darkMode ? item?.des ? (item.des && item.des.length > 100) ? "font-[Poppins-Medium] text-[white] text-[16px]" : "font-[Poppins-Medium] text-[white] text-[22px]" : "font-[Poppins-Medium] text-[white] text-[18px]" : item?.des ? (item.des && item.des.length > 100) ? "font-[Poppins-Medium] text-[16px]" : "font-[Poppins-Medium] text-[22px]" : "font-[Poppins-Medium] text-[18px]"}>{item.des}</Text>
                                             </View>
                                             <View className="flex-row gap-[30] mt-[10px]">
                                                 <TouchableOpacity className="flex-row gap-[10] items-center" activeOpacity={1} onPress={() => LikePosts(item.id)}>
-                                                    <MaterialCommunityIcons name="cards-heart" size={24} color={likedPost.includes(item.id) ? "red" : 'black'} />
-                                                    <Text className="font-[Poppins-SemiBold] text-[16px]">{item.like}</Text>
+                                                    <MaterialCommunityIcons name="cards-heart" size={24} color={likedPost.includes(item.id) ? "red" : darkMode ? 'white' : 'black'} />
+                                                    <Text className={darkMode ? "font-[Poppins-SemiBold] text-[white] text-[16px]" : "font-[Poppins-SemiBold] text-[16px]"}>{item.like}</Text>
                                                 </TouchableOpacity>
                                                 <View className="flex-row gap-[10] items-center">
-                                                    <MaterialCommunityIcons name="comment-multiple" size={24} color="black" />
-                                                    <Text className="font-[Poppins-SemiBold] text-[16px]">{item.comment}</Text>
+                                                    <MaterialCommunityIcons name="comment-multiple" size={24} color={darkMode ? 'white' : "black"} />
+                                                    <Text className={darkMode ? "font-[Poppins-SemiBold] text-[white] text-[16px]" : "font-[Poppins-SemiBold] text-[16px]"}>{item.comment}</Text>
                                                 </View>
                                             </View>
                                         </TouchableOpacity>
