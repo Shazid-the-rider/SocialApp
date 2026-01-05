@@ -20,10 +20,16 @@ export type NewUserModel = {
     following?: number | 0;
     bio?: "";
     uploadpost: number | 0;
+    expoPushToken: string;
 
 };
 
 export type GlobalContextType = {
+    userBio:(val:string)=>void;
+    UploadComment:(val:string)=>void;
+    comments:any[];
+    setSelectedPost:(val:string)=>void;
+    commentSheet:boolean;
     newUser: NewUserModel | undefined;
     currentUser: NewUserModel | undefined;
     setNewUser: React.Dispatch<React.SetStateAction<NewUserModel | undefined>>;
@@ -32,18 +38,33 @@ export type GlobalContextType = {
     Allposts: any;
     refreshPost: () => Promise<void>;
     loading: boolean;
-    LikePosts: (postid: string) => Promise<void>
+    LikePosts: (postid: string, posterId: string, LikerId: string) => Promise<void>
     likedPost: string[];
     searchUserUid: string;
     setSearchUserUid: (val: string) => void;
     search_User_And_Find_its_Info: (val: string) => void;
     search_User_And_Find_its_Post: (val: string) => void;
-    searchUserInfo: NewUserModel|undefined;
+    searchUserInfo: NewUserModel | undefined;
     searchUserpost: PostType[];
-    owner:string;
-    setOwner:(val:string)=>void;
-    darkMode:boolean;
-    setDarkMode:(val:boolean)=>void
+    owner: string;
+    setOwner: (val: string) => void;
+    darkMode: boolean;
+    setDarkMode: (val: boolean) => void;
+    updatePost: (postid: string, status: string) => Promise<void>
+    Following: (val: string) => Promise<void>
+    followedUser: string[]
+    visible: boolean;
+    usersForChat: chatUserModel[];
+    setUsersForChat: (val: chatUserModel[]) => void;
+    commentSheetModalPopUp: () => void;
+    commentSheetModalPopOut: () => void;
+    notification: any[];
+    setNotification: (val: any[]) => void;
+    setSearchUserInfo: (val: NewUserModel) => void;
+    setSearchUserPost: (val: PostType[]) => void;
+    setCurrentuser: (val: NewUserModel) => void;
+    setLikedPost: (val: string[]) => void;
+    setFollowedUser: (val: string[]) => void
 };
 
 export type AllPostType = {
@@ -65,4 +86,11 @@ export type AllPostType = {
     like: number | 0;
     comment: number | 0;
     post: string;
+}
+
+export type chatUserModel = {
+    uid: string;
+    firstName: string;
+    lastName: string;
+    image: string;
 }

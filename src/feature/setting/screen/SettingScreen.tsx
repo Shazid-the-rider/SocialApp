@@ -8,8 +8,8 @@ export default function SettingScreen(){
 
     return(
        <SafeAreaProvider>
-        <SafeAreaView className={darkMode?"flex-1 bg-black":"flex-1 bg-white"}>
-        <View className={darkMode?"flex-1 bg-black":"flex-1 bg-white"}>
+        <SafeAreaView className={darkMode?"flex-1 bg-[rgb(18,18,18)]":"flex-1 bg-white"}>
+        <View className={darkMode?"flex-1 bg-[rgb(18,18,18)]":"flex-1 bg-white"}>
             <SettingPageComponents HandleLogOut={HandleLogOut}/>
         </View>
         </SafeAreaView>

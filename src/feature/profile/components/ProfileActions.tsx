@@ -6,13 +6,13 @@ export const ProfileActions = React.memo(({ darkMode, PostModalPopUp, EditProfil
 
     return (
         <View>
-            <View className="gap-[10] mt-[20px] mx-[15px]">
-                <TouchableOpacity className={darkMode ? " justify-center border-2 bg-[rgb(32,32,32)] px-[10px] py-[8px] rounded-xl flex-row gap-[10] items-center" : " justify-center border-2 border-gray-100 px-[10px] py-[8px] bg-gray-100 rounded-xl flex-row gap-[10] items-center"} activeOpacity={.7} onPress={() => EditProfileModalPopUp()}>
-                    <Entypo name="edit" size={24} color={darkMode ? 'white' : "black"} />
+            <View className="gap-[10] mt-[20px] mx-[15px] flex-row justify-between">
+                <TouchableOpacity className={darkMode ? " justify-center  bg-[rgb(32,32,32)] px-[15px] py-[8px] rounded-xl flex-row gap-[10] items-center" : " justify-center border-2 border-gray-100 px-[15px] py-[8px] bg-gray-100 rounded-xl flex-row gap-[10] items-center"} activeOpacity={.7} onPress={() => EditProfileModalPopUp()}>
+                    <Entypo name="edit" size={16} color={darkMode ? 'white' : "black"} />
                     <Text className={darkMode ? "text-[15px] text-[white] font-[Poppins-Medium]" : "text-[15px] font-[Poppins-Medium]"}>Edit Profile</Text>
                 </TouchableOpacity>
-                <TouchableOpacity className={darkMode ? " justify-center border-2 bg-[rgb(32,32,32)] px-[10px] py-[8px] rounded-xl flex-row gap-[10] items-center" : " justify-center border-2 border-gray-100 px-[10px] py-[8px] bg-gray-100 rounded-xl flex-row gap-[10] items-center"} onPress={() => PostModalPopUp()}>
-                    <MaterialCommunityIcons name="post" size={24} color={darkMode ? 'white' : "black"} />
+                <TouchableOpacity className={darkMode ? " justify-center bg-[rgb(32,32,32)] px-[15px] py-[8px] rounded-xl flex-row gap-[10] items-center" : " justify-center border-2 border-gray-100 px-[15px] py-[8px] bg-gray-100 rounded-xl flex-row gap-[10] items-center"} onPress={() => PostModalPopUp()}>
+                    <MaterialCommunityIcons name="post" size={17} color={darkMode ? 'white' : "black"} />
                     <Text className={darkMode ? "text-[15px] text-[white] font-[Poppins-Medium]" : "text-[15px] font-[Poppins-Medium]"}>Create your post</Text>
                 </TouchableOpacity>
             </View>

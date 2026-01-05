@@ -1,39 +1,40 @@
-import { StatusBar } from 'expo-status-bar';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
-import LoginSignup from './src/feature/login/screen/LoginSignup';
-import UserinfoSetScreen from './src/feature/setup/screen/UserinfoSetScreen';
-import UserprofileImageSet from './src/feature/setup/components/UserprofileImageSet';
-import SplashScreen from './src/feature/splash/screen/SplashScreen';
-import { createStackNavigator } from '@react-navigation/stack';
-import UserprofileimageScreen from './src/feature/setup/screen/UserprofileimageScreen';
-import { NavigationContainer } from '@react-navigation/native';
-import { GlobalContext, GlobalContextApi } from './context/GlobalContext';
-import { AuthContext } from './context/AuthContext';
-import { PropsWithChildren, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from './shared/services/firebaseConfig';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from './src/feature/home/screen/HomeScreen';
-import ProfileScreen from './src/feature/profile/screen/ProfileScreen';
-import NotificationScreen from './src/feature/notificaton/screen/NotificationScreen';
-import SettingScreen from './src/feature/setting/screen/SettingScreen';
 import { Ionicons } from '@expo/vector-icons';
-import Colors from './src/utils/colors';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { PropsWithChildren, useContext, useEffect, useState } from 'react';
+import { Dimensions, StyleSheet } from 'react-native';
+import { AuthContext } from './context/AuthContext';
+import { GlobalContext, GlobalContextApi } from './context/GlobalContext';
+import { auth, db } from './shared/services/firebaseConfig';
+import HomeScreen from './src/feature/home/screen/HomeScreen';
+import LoginSignup from './src/feature/login/screen/LoginSignup';
+import NotificationScreen from './src/feature/notificaton/screen/NotificationScreen';
+import ProfileScreen from './src/feature/profile/screen/ProfileScreen';
+import SettingScreen from './src/feature/setting/screen/SettingScreen';
+import UserinfoSetScreen from './src/feature/setup/screen/UserinfoSetScreen';
+import UserprofileimageScreen from './src/feature/setup/screen/UserprofileimageScreen';
+import SplashScreen from './src/feature/splash/screen/SplashScreen';
 import WaitScreen from './src/feature/wait/screen/WaitScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { doc, setDoc } from 'firebase/firestore';
 import "./global.css";
+import ChatList from './shared/screen/ChatList';
+import { registerForPushNotificationsAsync } from './shared/services/Notification';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
 interface AuthStackProps {
   user: User | null;
 }
 function BottomStack() {
   const context = useContext(GlobalContextApi);
-  const {darkMode}= context;
-  
+  if (!context) {
+    return undefined;
+  }
+  const { darkMode, notification } = context;
+
   return (
     <Tab.Navigator initialRouteName='Home'
       screenOptions={({ route }) => ({
@@ -52,10 +53,10 @@ function BottomStack() {
 
           return <Ionicons name={iconName as any} size={size} color={color} />;
         },
-        tabBarActiveTintColor: darkMode?'white':'black',
-        tabBarInactiveTintColor:darkMode?'grey': 'black',
+        tabBarActiveTintColor: darkMode ? 'white' : 'black',
+        tabBarInactiveTintColor: darkMode ? 'grey' : 'black',
         headerShown: false,
-        tabBarStyle:{
+        tabBarStyle: {
           position: 'absolute',
           bottom: 20,
           height: 60,
@@ -66,8 +67,8 @@ function BottomStack() {
           alignItems: 'center',
           borderRadius: 50,
           borderWidth: 0,
-          borderColor: darkMode?'none':'white',
-          backgroundColor: darkMode?'rgb(40,40,40)':'white',
+          borderColor: darkMode ? 'none' : 'white',
+          backgroundColor: darkMode ? 'rgb(19,19,19)' : 'white',
           shadowColor: "#2c2b2bff",
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.25,
@@ -78,20 +79,34 @@ function BottomStack() {
       })}>
       <Tab.Screen name='Home' component={HomeScreen} />
       <Tab.Screen name='Profile' component={ProfileScreen} />
-      <Tab.Screen name='Notification' component={NotificationScreen} />
+      <Tab.Screen name='Notification' component={NotificationScreen}
+        options={{
+          tabBarBadge: notification.length > 0 ? notification.length : 0,
+          tabBarBadgeStyle: {
+            backgroundColor: 'red',
+            color: 'white',
+            fontSize: 11,
+            fontFamily: 'Poppins-Medium'
+          },
+        }} />
       <Tab.Screen name='Settings' component={SettingScreen} />
     </Tab.Navigator>
   )
 }
 function AuthStack({ user }: PropsWithChildren<AuthStackProps>) {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={!user ? 'LoginSignup' : 'Bottom'}>
-      <Stack.Screen name="LoginSignup" component={LoginSignup} options={{ gestureEnabled: false }} />
-      <Stack.Screen name="SetupUserinfo" component={UserinfoSetScreen} />
-      <Stack.Screen name="SetupImage" component={UserprofileimageScreen} />
-      <Stack.Screen name='Wait' component={WaitScreen} />
-
-      <Stack.Screen name='Bottom' component={BottomStack}/>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {
+        user ? (
+          <>
+            <Stack.Screen name='Bottom' component={BottomStack} />
+            <Stack.Screen name="SetupUserinfo" component={UserinfoSetScreen} />
+            <Stack.Screen name="SetupImage" component={UserprofileimageScreen} />
+            <Stack.Screen name='Wait' component={WaitScreen} />
+            <Stack.Screen name='ChatList' component={ChatList} />
+          </>
+        ) : (<Stack.Screen name="LoginSignup" component={LoginSignup} options={{ gestureEnabled: false }} />)
+      }
 
     </Stack.Navigator>
   );
@@ -99,27 +114,38 @@ function AuthStack({ user }: PropsWithChildren<AuthStackProps>) {
 
 
 export default function App() {
-
+  //const navigation = useNavigation();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [showSplash, setShowSplash] = useState<boolean>(true);
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSplash(false);
-    });
+    }, 4000);
     return () => clearTimeout(timer);
   }, [])
+
+
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (usr) => {
+    const unsub = onAuthStateChanged(auth, async (usr) => {
       setUser(usr);
       setLoading(false);
+      if (usr) {
+        const token = await registerForPushNotificationsAsync();
+
+        if (token) {
+          await setDoc(
+            doc(db, "users", usr.uid),
+            { expoPushToken: token },
+            { merge: true }
+          );
+        }
+      }
     });
-    return unsubscribe;
+
+    return unsub;
   }, []);
 
-  if (loading) {
-    return null;
-  }
   return (
 
     <AuthContext.Provider value={{ user }}>
@@ -138,11 +164,4 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+

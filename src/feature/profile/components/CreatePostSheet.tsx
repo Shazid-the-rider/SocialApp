@@ -1,10 +1,7 @@
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import React, { useContext } from "react";
+import React from "react";
 import { Animated, Image, Keyboard, KeyboardAvoidingView, Modal, Platform, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { NotificationPop } from "./NotificationPop";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
-import { AuthContext } from "../../../../context/AuthContext";
 
 type Props = {
 
@@ -36,11 +33,11 @@ export const CreatePostSheet = React.memo(({ darkMode, createPostModal, PostModa
             className="h-[100%] w-[100%] bg-black"
         >
             <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-                <View className={darkMode ? " absolute h-[100%] w-[100%] bg-black  z-40 " : " absolute h-[100%] w-[100%] bg-white  z-40 "}  >
-                    <View className="flex-row items-center h-[70px] px-[10px] justify-between">
+                <View className={darkMode ? " absolute h-[100%] w-[100%] bg-[rgb(18,18,18)]  z-40 " : " absolute h-[100%] w-[100%] bg-white  z-40 "}  >
+                    <View className="flex-row items-center h-[70px] mt-[15px] px-[10px] justify-between">
                         <TouchableOpacity className="flex-row items-center" activeOpacity={0.6} onPress={() => { Keyboard.dismiss(); PostModalPopOut() }}>
                             <Ionicons name="chevron-back" size={24} color={darkMode ? 'white' : "black"} />
-                            <Text className={darkMode ? "text-[15px] text-[white]" : "text-[15px]"} style={{ fontFamily: 'Poppins-SemiBold' }}>Back</Text>
+                            <Text className={darkMode ? "text-[15px] text-[white]" : "text-[15px]"} style={{ fontFamily: 'Poppins-Medium' }}>Back</Text>
                         </TouchableOpacity>
                         {
                             (des.trim() !== "" || selectedImage) && (
@@ -48,7 +45,7 @@ export const CreatePostSheet = React.memo(({ darkMode, createPostModal, PostModa
                                     Keyboard.dismiss();
                                     UploadPost();
                                 }}>
-                                    <Text className="text-[15px] text-blue-700" style={{ fontFamily: 'Poppins-SemiBold' }}>Done</Text>
+                                    <Text className="text-[15px] text-blue-700" style={{ fontFamily: 'Poppins-Medium' }}>Done</Text>
                                 </TouchableOpacity>
                             )
                         }
@@ -56,13 +53,13 @@ export const CreatePostSheet = React.memo(({ darkMode, createPostModal, PostModa
                     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1, justifyContent: 'flex-start' }} keyboardVerticalOffset={10}>
                         <View className="items-center mb-[25px] gap-[10]">
                             <Text className={darkMode ? "font-[Poppins-Semibold] text-[white] text-[25px]" : "font-[Poppins-Semibold] text-[25px]"}>Create Your Post</Text>
-                            <Text className={darkMode ? "text-[15px] text-[rgba(186,186,186,0.53)] font-[Poppins-SemiBold]" : "text-[15px] text-[rgba(73,73,73,0.53)] font-[Poppins-SemiBold]"}> Moments & Thoughts share with everyone</Text>
+                            <Text className={darkMode ? "text-[15px] text-[rgba(186,186,186,0.53)] font-[Poppins-Medium]" : "text-[15px] text-[rgba(73,73,73,0.53)] font-[Poppins-Medium]"}> Moments & Thoughts share with everyone</Text>
                         </View>
                         <View className="flex-row items-center gap-[10] mx-[20px] mb-[10px] ">
                             <Image className="h-[30px] w-[30px] rounded-full" source={{ uri: currentUser.image }} />
                             <View>
                                 <View className="flex-row gap-[5px] items-center">
-                                    <Text className={darkMode ? "font-[Poppins-SemiBold] text-[white] text-[14px]" : "font-[Poppins-SemiBold] text-[14px]"}>{currentUser.firstName} {currentUser.lastName}</Text>
+                                    <Text className={darkMode ? "font-[Poppins-Medium] text-[white] text-[14px]" : "font-[Poppins-Medium] text-[14px]"}>{currentUser.firstName} {currentUser.lastName}</Text>
                                     <MaterialIcons name="verified" size={15} color="blue" />
                                 </View>
                                 <View className="flex-row gap-[10]">
@@ -71,7 +68,7 @@ export const CreatePostSheet = React.memo(({ darkMode, createPostModal, PostModa
                                 </View>
                             </View>
                         </View>
-                        <View className={focus ? "flex-[.8]" : selectedImage ? "h-[20%]" : "h-[60%]"}>
+                        <View className={focus ? "flex-[.8]" : selectedImage ? "h-[10%]" : "h-[90%]"}>
                             <TextInput
                                 placeholder="What's on your mind"
                                 multiline
@@ -89,7 +86,7 @@ export const CreatePostSheet = React.memo(({ darkMode, createPostModal, PostModa
                                 <>
                                     {
                                         selectedImage && (
-                                            <View className="flex-[.7] justify-center items-center relative">
+                                            <View className="flex-[.8] justify-center items-center relative">
                                                 <TouchableOpacity className="absolute right-[10px] top-[3px] z-[100] h-[32] w-[32] rounded-full bg-white" activeOpacity={.7} onPress={() => setSelectedImage("")}>
                                                     <MaterialIcons name="cancel" size={32} color="black" />
                                                 </TouchableOpacity>
@@ -98,12 +95,12 @@ export const CreatePostSheet = React.memo(({ darkMode, createPostModal, PostModa
                                         )
                                     }
                                     <View className="absolute w-[100%] bottom-[40]  flex-row justify-center gap-[20]">
-                                        <TouchableOpacity className={postType === 'photos' ? " w-[40%] flex-row justify-center items-center gap-[6]  py-[7px] rounded-3xl" : "w-[40%] flex-row  justify-center items-center gap-[6] px-[10px]  py-[7px] rounded-3xl"} activeOpacity={.7} onPress={() => { setType('photo'); PickFile() }}>
-                                            <Ionicons name="images-sharp" size={24} color={darkMode ? 'white' : "black"} />
+                                        <TouchableOpacity className={postType === 'photos' ? " w-[40%] flex-row justify-center items-center gap-[10]  py-[7px] rounded-3xl" : "w-[40%] flex-row  justify-center items-center gap-[10] px-[10px]  py-[7px] rounded-3xl"} activeOpacity={.7} onPress={() => { setType('photo'); PickFile() }}>
+                                            <Ionicons name="images-sharp" size={17} color={darkMode ? 'white' : "black"} />
                                             <Text className={darkMode ? "text-[15px] text-[white] font-[Poppins-Medium]" : "text-[15px] font-[Poppins-Medium]"}>Add Photos</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity className={postType === 'reel' ? "w-[40%] flex-row justify-center  items-center gap-[6]  py-[7px] rounded-3xl" : "w-[40%] flex-row  justify-center items-center gap-[6]  px-[10px]  py-[7px] rounded-3xl"} activeOpacity={.7} onPress={() => { setType('video'), PickFile() }}>
-                                            <FontAwesome name="video-camera" size={24} color={darkMode ? 'white' : "black"} />
+                                        <TouchableOpacity className={postType === 'reel' ? "w-[40%] flex-row justify-center  items-center gap-[10]  py-[7px] rounded-3xl" : "w-[40%] flex-row  justify-center items-center gap-[10]  px-[10px]  py-[7px] rounded-3xl"} activeOpacity={.7} onPress={() => { setType('video'), PickFile() }}>
+                                            <FontAwesome name="video-camera" size={17} color={darkMode ? 'white' : "black"} />
                                             <Text className={darkMode ? "text-[15px] text-[white] font-[Poppins-Medium]" : "text-[15px] font-[Poppins-Medium]"}>Add Videos</Text>
                                         </TouchableOpacity>
                                     </View></>

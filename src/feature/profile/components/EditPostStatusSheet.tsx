@@ -1,18 +1,18 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { Animated, Dimensions, Image, Keyboard, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Image, Keyboard, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import { GlobalContextApi } from "../../../../context/GlobalContext";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 
-const height = Dimensions.get('window').height;
 type Props = {
     editPostModal: boolean;
     EditPostModalPopOut: () => void;
     currentStatus: string;
     setCurrentStatus: (val: string) => void;
     currentUser: any;
+    postUid: string;
+    updatePost: (postid: string, status: string) => Promise<void>
 }
-export const EditPostStatusSheet = React.memo(({ currentUser, currentStatus, setCurrentStatus, editPostModal, EditPostModalPopOut }: Props) => {
+export const EditPostStatusSheet = React.memo(({updatePost, postUid, currentUser, currentStatus, setCurrentStatus, editPostModal, EditPostModalPopOut }: Props) => {
     const [keyboardVisible, setKeyboardVisible] = useState(false);
     const [update, setUpdate] = useState(false);
     useEffect(() => {
@@ -38,10 +38,10 @@ export const EditPostStatusSheet = React.memo(({ currentUser, currentStatus, set
             <View className="h-[100%] w-[100%] absolute bg-white z-40 px-[20px] shadow-md">
                 <View className="flex-row justify-between h-[50px] items-center mt-[20px] mb-[20px]">
                     <TouchableOpacity onPress={() => { Keyboard.dismiss(); setUpdate(false); EditPostModalPopOut() }}>
-                        <Text className="font-[Poppins-SemiBold] text-[14px]">Cancel</Text>
+                        <Text className="font-[Poppins-Medium] text-[14px]">Cancel</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity>
-                        <Text className={update ? "font-[Poppins-SemiBold] text-[14px] text-sky-700" : "font-[Poppins-SemiBold] text-[14px] text-gray-400"}>Update</Text>
+                    <TouchableOpacity onPress={() => { updatePost(postUid, currentStatus); EditPostModalPopOut() }}>
+                        <Text className={(update && currentStatus.length > 0) ? "font-[Poppins-Medium] text-[14px] text-sky-700" : "font-[Poppins-Medium] text-[14px] text-gray-400"}>Update</Text>
                     </TouchableOpacity>
                 </View>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -50,7 +50,7 @@ export const EditPostStatusSheet = React.memo(({ currentUser, currentStatus, set
                             <Image className="h-[30px] w-[30px] rounded-full" source={{ uri: currentUser.image }} />
                             <View>
                                 <View className="flex-row gap-[5px] items-center">
-                                    <Text className="font-[Poppins-SemiBold] text-[14px]">{currentUser.firstName} {currentUser.lastName}</Text>
+                                    <Text className="font-[Poppins-Medium] text-[14px]">{currentUser.firstName} {currentUser.lastName}</Text>
                                     <MaterialIcons name="verified" size={15} color="blue" />
                                 </View>
                                 <View className="flex-row gap-[10]">

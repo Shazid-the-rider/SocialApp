@@ -1,24 +1,22 @@
+import NetInfo from "@react-native-community/netinfo";
+import { useNavigation } from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import * as ImagePicker from 'expo-image-picker';
+import { addDoc, collection, deleteDoc, doc, increment, onSnapshot, orderBy, query, updateDoc, where } from "firebase/firestore";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Alert, Animated, Dimensions, Linking } from "react-native";
 import { AuthContext } from "../../../../context/AuthContext";
-import { GlobalContextApi} from "../../../../context/GlobalContext";
-import { useFonts } from "expo-font";
-import { useNavigation } from "@react-navigation/native";
-import * as ImagePicker from 'expo-image-picker';
-import { customFonts } from "../../../utils/fonts";
-import { addDoc, collection, deleteDoc, doc, increment, onSnapshot, orderBy, query, updateDoc, where } from "firebase/firestore";
+import { GlobalContextApi } from "../../../../context/GlobalContext";
 import { db } from "../../../../shared/services/firebaseConfig";
 import { uploadToCloudinary } from "../../../../shared/services/uploadToCloudinary";
-import NetInfo from "@react-native-community/netinfo";
 import { PostType } from "../../../../type/typeCast";
+import { customFonts } from "../../../utils/fonts";
 
 const height = Dimensions.get('window').height;
-const width = Dimensions.get('window').width;
 
 
 export default function useProfileHooks() {
 
-    const navigation = useNavigation();
 
     const { user } = useContext(AuthContext); //Authnetication check 
 
@@ -62,11 +60,11 @@ export default function useProfileHooks() {
 
     const [editProfileModal, setEditProfileModal] = useState(false);
 
-    const [editPostModal,setEditPostModal] = useState(false);
+    const [editPostModal, setEditPostModal] = useState(false);
 
-    const [editViewImageModal,setEditViewImageModal] = useState(false);
+    const [editViewImageModal, setEditViewImageModal] = useState(false);
 
-    const [optionModal,setOptionModal]=useState(false);
+    const [optionModal, setOptionModal] = useState(false);
 
     // Real time data fetching by dynamic prop
 
@@ -149,10 +147,10 @@ export default function useProfileHooks() {
     const EditViewImageModalPopOut = () => {
         setEditViewImageModal(false);
     }
-    const OptionModalPopUp=()=>{
+    const OptionModalPopUp = () => {
         setOptionModal(true)
     }
-    const OptionModalPopOut=()=>{
+    const OptionModalPopOut = () => {
         setOptionModal(false)
     }
 
@@ -243,7 +241,7 @@ export default function useProfileHooks() {
     if (!context) {
         return null;
     }
-    const { currentUser,likedPost,LikePosts, darkMode } = context;
+    const { currentUser, likedPost, LikePosts, darkMode, updatePost,commentSheetModalPopUp ,userBio} = context;
 
     //Delete post from social Media 
 
@@ -268,12 +266,13 @@ export default function useProfileHooks() {
     }
 
     return {
-        darkMode,user, postType, setPostType, selectedImage, setSelectedImage, des, setDes, selectedImageUrl, setSelectedImageUrl, status, setStatus,
+
+        commentSheetModalPopUp, updatePost, darkMode, user, postType, setPostType, selectedImage, setSelectedImage, des, setDes, selectedImageUrl, setSelectedImageUrl, status, setStatus,
         type, setType, message, setMessage, focus, setFocus, posts, setPosts, viewImage, setViewImage, fonts, notify,
         currentUser, notifyPopUp, notifyPopOut, PickFile, UploadPost, postUid, setPostUid, selectedPost, setSelectedPost, HandlePostDelete, EditPostAnim,
-        currentStatus, setCurrentStatus, PostModalPopUp, PostModalPopOut, createPostModal, EditProfileModalPopUp, EditProfileModalPopOut, 
-        editProfileModal,editPostModal,EditPostModalPopUp,EditPostModalPopOut, editViewImageModal, EditViewImageModalPopOut,EditViewImageModalPopUp,
-        optionModal,OptionModalPopUp, OptionModalPopOut,likedPost,LikePosts
+        currentStatus, setCurrentStatus, PostModalPopUp, PostModalPopOut, createPostModal, EditProfileModalPopUp, EditProfileModalPopOut,
+        editProfileModal, editPostModal, EditPostModalPopUp, EditPostModalPopOut, editViewImageModal, EditViewImageModalPopOut, EditViewImageModalPopUp,
+        optionModal, OptionModalPopUp, OptionModalPopOut, likedPost, LikePosts,userBio
     }
 
 }

@@ -18,6 +18,7 @@ export default function SettingPageComponents({ HandleLogOut }: Props) {
         return null;
     }
     const { currentUser, darkMode, setDarkMode } = context;
+
     const Anim1 = useRef(new Animated.Value(0)).current;
     const Anim2 = useRef(new Animated.Value(0)).current;
     const Anim3 = useRef(new Animated.Value(0)).current;
@@ -51,7 +52,7 @@ export default function SettingPageComponents({ HandleLogOut }: Props) {
     }
     return (
         <View>
-            <TouchableOpacity className="flex-row items-center h-[70px] pl-[10px]">
+            <TouchableOpacity className="flex-row items-center h-[70px] pl-[10px]" onPress={() => navigation.navigate('Home' as never)}>
                 <Ionicons name="chevron-back" size={24} color={darkMode ? 'white' : "black"} />
                 <Text className={darkMode ? "text-[15px] text-[white]" : "text-[15px] text-[black]"} style={{ fontFamily: 'Poppins-SemiBold' }}>Back to Home</Text>
             </TouchableOpacity>
@@ -108,7 +109,7 @@ export default function SettingPageComponents({ HandleLogOut }: Props) {
                     <TouchableOpacity style={[styles.view, { padding: 12, borderRadius: 7, alignItems: 'center', backgroundColor: darkMode ? 'rgb(32,32,32,1)' : 'rgba(236, 235, 235, 0.29)', borderColor: darkMode ? 'black' : 'rgba(225, 225, 225, 0.88)' }]} activeOpacity={.6}>
                         <Text className={darkMode ? "text-[14px] text-[rgba(168,168,168,0.72)] font-[Poppins-SemiBold]" : "text-[14px] text-[rgba(99,98,98,0.53)] font-[Poppins-SemiBold]"}>Version {Constants.expoConfig?.version}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.view, { marginTop: 12, padding: 12, borderRadius: 30, alignItems: 'center', backgroundColor: darkMode ? 'red' : 'black', borderWidth: darkMode ? 0 : 1 }]} activeOpacity={.6} onPress={() => HandleLogOut()}>
+                    <TouchableOpacity style={[styles.view, { marginTop: 12, padding: 12, borderRadius: 30, alignItems: 'center', backgroundColor: darkMode ? 'rgb(100,0,0)' : 'black', borderWidth: darkMode ? 0 : 1 }]} activeOpacity={.6} onPress={() => HandleLogOut()}>
                         <Text className="text-[15px] text-white font-[Poppins-SemiBold]">Log out</Text>
                     </TouchableOpacity>
                 </Animated.View>

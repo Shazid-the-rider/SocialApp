@@ -1,12 +1,11 @@
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeApp } from "firebase/app";
 import {
+  browserLocalPersistence,
   getAuth,
   initializeAuth,
-  browserLocalPersistence,
-  // @ts-ignore - getReactNativePersistence is not properly exported in types
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 // Dynamically get React Native persistence to avoid TypeScript errors
 let getReactNativePersistence: any;

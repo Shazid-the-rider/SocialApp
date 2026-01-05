@@ -1,10 +1,6 @@
-import { useFonts } from "expo-font";
-import { ActivityIndicator, Animated, Dimensions, Keyboard, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
-import { customFonts } from "../../../utils/fonts";
-import { useEffect, useRef, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Entypo, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import { Animated, Dimensions, Keyboard, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import useUserinfoSetHook from "../hooks/useUserinfoSetHook";
 
 const height = Dimensions.get('window').height;
@@ -15,18 +11,16 @@ export default function UserinfoSet() {
     if (!context) {
         return null;
     }
-    const { firstName, setFirstName,
-        lastName, setLastName,
-        firstnameError, setFirstNameError,
-        lastnameError, setLastNameError,
-        blankError, setBlankError,
+    const { setFirstName,
+        setLastName,
+        firstnameError, 
+        lastnameError, 
+        blankError, 
         dob, setDob,
         gender, setGender,
         showDate, setShowDate,
         showGender, setShowGender,
-        success, setSuccess,
-        navigation,
-        fonts,
+        success, 
         headerAnim,
         notificationpopup,
         bottomSheetAnim,
@@ -37,8 +31,6 @@ export default function UserinfoSet() {
         popOut,
         PopUpGender,
         popOutGender,
-        notifypopout,
-        notifypopupAnim,
         HandleSetUpInfo } = context
 
     return (
@@ -100,7 +92,7 @@ export default function UserinfoSet() {
                 {/*NEXT BUTTON*/}
 
                 <Animated.View style={{ opacity: button }}>
-                    <TouchableOpacity className="mt-[20px] p-[14px] bg-[rgba(19,1,71,1)] rounded-[30px] items-center" style={{ width: width / 1.1 }} activeOpacity={0.7}
+                    <TouchableOpacity className="mt-[20px] p-[14px] bg-[black] rounded-[30px] items-center" style={{ width: width / 1.1 }} activeOpacity={0.7}
                         onPress={() => HandleSetUpInfo()}
                     >
                         <Text style={{ fontFamily: 'Poppins-Medium', color: 'white', fontSize: 17 }}>Next</Text>

@@ -1,16 +1,17 @@
-import { Entypo, FontAwesome, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
-import { Alert, Animated, Dimensions, Image, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
+import { Alert, Animated, Dimensions, Image, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-import { customFonts } from "../../../utils/fonts";
-import { useContext, useRef, useState } from "react";
-import { uploadToCloudinary } from "../../../../shared/services/uploadToCloudinary";
-import { GlobalContextApi } from "../../../../context/GlobalContext";
 import { useNavigation } from "@react-navigation/native";
-import { AuthContext } from "../../../../context/AuthContext";
 import { doc, setDoc } from "firebase/firestore";
+import { useContext, useRef, useState } from "react";
+import { AuthContext } from "../../../../context/AuthContext";
+import { GlobalContextApi } from "../../../../context/GlobalContext";
 import { db } from "../../../../shared/services/firebaseConfig";
+import { uploadToCloudinary } from "../../../../shared/services/uploadToCloudinary";
+import { customFonts } from "../../../utils/fonts";
+import { registerForPushNotificationsAsync } from "../../../../shared/services/Notification";
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -155,10 +156,6 @@ export default function UserprofileImageSet() {
             >
                 <Text style={{ fontSize: 18, fontFamily: 'Poppins-Medium' }}>Set profile picture</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.cancel} activeOpacity={.6}>
-                <Text style={{ fontSize: 18, fontFamily: 'Poppins-Medium' }}>Not now</Text>
-            </TouchableOpacity>
-
             <Animated.View style={[styles.popupOp, { bottom: imageOption }]}>
                 <TouchableOpacity style={styles.linebox} onPress={() => ImageOptionPopOut()}>
                     <View style={styles.line}></View>

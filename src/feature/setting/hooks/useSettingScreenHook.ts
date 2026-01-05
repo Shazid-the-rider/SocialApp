@@ -8,7 +8,11 @@ import { GlobalContextApi } from "../../../../context/GlobalContext";
 export default function useSettingScreenHook() {
     const navigation = useNavigation();
     const context = useContext(GlobalContextApi);
-    const {darkMode}= context;
+    if (!context) {
+        return;
+    }
+    const { toggleAction } = context;
+    const { darkMode } = context;
     const HandleLogOut = async () => {
         Alert.alert("Confirm Logout", "Are you sure you want to log out?", [
             {
@@ -21,7 +25,7 @@ export default function useSettingScreenHook() {
                 onPress: async () => {
                     try {
                         await signOut(auth);
-                        navigation.navigate('LoginSignup' as never);
+                        toggleAction("");
                     } catch (error) {
                         console.error("Logout error:", error);
                         Alert.alert("Error", "Could not log out. Please try again.");
@@ -30,5 +34,5 @@ export default function useSettingScreenHook() {
             },
         ]);
     }
-    return { HandleLogOut,darkMode }
+    return { HandleLogOut, darkMode }
 }

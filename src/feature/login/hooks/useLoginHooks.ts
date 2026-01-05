@@ -195,6 +195,7 @@ export default function useLoginHooks() {
                     follower: 0,
                     following: 0,
                     uploadpost: 0,
+                    expoPushToken: "",
                 }
 
                 setNewUser(user);

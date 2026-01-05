@@ -1,11 +1,11 @@
-import React, { memo } from 'react';
-import { View, Text, StyleSheet, Animated, Dimensions } from 'react-native';
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
+import React from 'react';
+import { Animated, Dimensions, StyleSheet, Text, View } from 'react-native';
 const width = Dimensions.get('window').width;
 type Props = { status: boolean; message: string; notify: Animated.Value };
 
 export const NotificationPop = React.memo(({ status, message, notify }: Props) => {
-    
+
     return (
         <Animated.View className="w-[100%] justify-center items-center" style={{ bottom: notify }}>
             <View style={styles.notify}>

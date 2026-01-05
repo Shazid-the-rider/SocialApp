@@ -78,33 +78,33 @@ export default function useUserinfoSetHook() {
     const notifypopout = () => {
         return Animated.timing(notificationpopup, {
             toValue: -100,
-            duration: 700,
+            duration: 200,
             useNativeDriver: false
         }).start()
     }
     const notifypopupAnim = () => {
         return Animated.timing(notificationpopup, {
             toValue: 20,
-            duration: 700,
+            duration: 200,
             useNativeDriver: false
         }).start(() => {
             setTimeout(() => {
                 notifypopout();
-            }, 2000)
+            }, 1000)
         })
     }
 
     const PopUp = () => {
         return Animated.timing(bottomSheetAnim, {
             toValue: 0,
-            duration: 1600,
+            duration: 300,
             useNativeDriver: false
         }).start()
     }
     const popOut = () => {
         return Animated.timing(bottomSheetAnim, {
             toValue: -height,
-            duration: 1600,
+            duration: 300,
             useNativeDriver: false
         }).start()
     }
@@ -112,14 +112,14 @@ export default function useUserinfoSetHook() {
     const PopUpGender = () => {
         return Animated.timing(bottomGenderAnim, {
             toValue: 0,
-            duration: 1600,
+            duration: 300,
             useNativeDriver: false
         }).start()
     }
     const popOutGender = () => {
         return Animated.timing(bottomGenderAnim, {
             toValue: -height,
-            duration: 1600,
+            duration: 300,
             useNativeDriver: false
         }).start()
     }
