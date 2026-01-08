@@ -1,7 +1,6 @@
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 import { Animated, Image, Keyboard, KeyboardAvoidingView, Modal, Platform, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
-import { NotificationPop } from "./NotificationPop";
 
 type Props = {
 
@@ -16,14 +15,13 @@ type Props = {
     des: string;
     focus: boolean,
     status: boolean,
-    message: string,
     notify: Animated.Value;
     currentUser: any;
     PostModalPopOut: () => void;
     createPostModal: boolean
     darkMode: boolean
 }
-export const CreatePostSheet = React.memo(({ darkMode, createPostModal, PostModalPopOut, currentUser, status, message, notify, focus, UploadPost, setDes, setFocus, selectedImage, setSelectedImage, postType, setType, PickFile, des }: Props) => {
+export const CreatePostSheet = React.memo(({ darkMode, createPostModal, PostModalPopOut, currentUser, focus, UploadPost, setDes, setFocus, selectedImage, setSelectedImage, postType, setType, PickFile, des }: Props) => {
     return (
         <Modal
             visible={createPostModal}
@@ -44,6 +42,7 @@ export const CreatePostSheet = React.memo(({ darkMode, createPostModal, PostModa
                                 <TouchableOpacity className="flex-row items-center mr-[10px]" activeOpacity={0.6} onPress={() => {
                                     Keyboard.dismiss();
                                     UploadPost();
+                                    PostModalPopOut()
                                 }}>
                                     <Text className="text-[15px] text-blue-700" style={{ fontFamily: 'Poppins-Medium' }}>Done</Text>
                                 </TouchableOpacity>
@@ -107,7 +106,7 @@ export const CreatePostSheet = React.memo(({ darkMode, createPostModal, PostModa
                             )
                         }
                     </KeyboardAvoidingView>
-                    <NotificationPop status={status} message={message} notify={notify} />
+
                 </View>
             </TouchableWithoutFeedback>
         </Modal>

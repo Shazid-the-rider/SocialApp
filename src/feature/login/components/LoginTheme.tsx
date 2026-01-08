@@ -21,7 +21,7 @@ export default function LoginTheme() {
         return null;
     }
     const { email, password, cpassword, success, navigation, action, visible, loginOption, fonts, emailError, cpasswordError, passwordError, submitLogin,
-        popup, RequestSignUp, setEmail, setPassword, setcPassword, setAction, setVisible, setLoginOption, setemailError, setcpasswordError, setpasswordError,
+        RequestSignUp, setEmail, setPassword, setcPassword, setAction, setVisible, setLoginOption, setemailError, setcpasswordError, setpasswordError,
         RequestLogin } = context;
 
     const TextAnim1 = useRef(new Animated.Value(.4)).current;
@@ -70,6 +70,12 @@ export default function LoginTheme() {
                                 <TextInput placeholder={emailError ? emailError : "Email Address"} className="text-[17px] w-[75%]" style={{ fontFamily: 'Poppins-Medium', width: '85%', fontSize: emailError ? 13 : 15 }}
                                     onChangeText={(text) => setEmail(text)}
                                     value={email}
+                                    keyboardType="email-address"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    spellCheck={false}
+                                    textContentType="emailAddress"
+                                    underlineColorAndroid="transparent"
                                 />
                                 {
                                     emailError && (
@@ -81,7 +87,7 @@ export default function LoginTheme() {
                             </Animated.View>
                             <Animated.View className="w-full relative border border-gray-200 h-[55px] rounded-[10px] flex flex-row items-center justify-start gap-[10] pl-[10]" style={{ opacity: ViewAnim }}>
                                 <MaterialIcons name="password" size={24} color={'black'} />
-                                <TextInput placeholder={passwordError ? passwordError : "Password"} className="text-[17px] w-[75%]" style={{ fontFamily: 'Poppins-Medium', fontSize: passwordError ? 13 : 15 }} secureTextEntry={visible}
+                                <TextInput placeholder={passwordError ? passwordError : "Password"} className="text-[17px] w-[75%]" style={{ fontFamily: 'Poppins-Medium', fontSize: passwordError ? 13 : 15 }} secureTextEntry={!visible}
                                     onChangeText={(text) => setPassword(text)}
                                     value={password}
                                 />
@@ -105,7 +111,7 @@ export default function LoginTheme() {
                                 action === 'signup' && (
                                     <Animated.View className="w-full relative border border-gray-200 h-[55px] rounded-[10px] flex flex-row items-center justify-start gap-[10] pl-[10]" style={{ opacity: ViewAnim }}>
                                         <MaterialIcons name="password" size={24} color={'black'} />
-                                        <TextInput placeholder={cpasswordError ? cpasswordError : 'Confirm Password'} className="text-[17px] w-[75%]" style={{ fontFamily: 'Poppins-Medium', fontSize: passwordError ? 13 : 15 }} secureTextEntry={visible}
+                                        <TextInput placeholder={cpasswordError ? cpasswordError : 'Confirm Password'} className="text-[17px] w-[75%]" style={{ fontFamily: 'Poppins-Medium', fontSize: passwordError ? 13 : 15 }} secureTextEntry={!visible}
                                             onChangeText={(text) => setcPassword(text)}
                                             value={cpassword}
                                         />
@@ -161,14 +167,8 @@ export default function LoginTheme() {
                                     </TouchableOpacity>
                                 )
                             }
-                            <Animated.View className="absolute w-[100%] h-[60px] bg-white rounded-[12px] flex flex-row items-center justify-center gap-[10px] shadow-[0_4px_6px_rgba(44,43,43,0.25)]" style={{ bottom: popup }}>
-                                <FontAwesome5 name="check-circle" size={24} color="green" />
-                                <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 14 }}>{success}</Text>
-                            </Animated.View>
                         </View>
                     </KeyboardAvoidingView>
-
-
                 </LinearGradient>
             </View>
         </TouchableWithoutFeedback>

@@ -1,7 +1,8 @@
-import { addDoc, arrayRemove, arrayUnion, collection, doc, getDoc, getDocs, increment, onSnapshot, orderBy, query, serverTimestamp, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
+import { addDoc, arrayRemove, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, increment, onSnapshot, orderBy, query, serverTimestamp, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
 import { AllPostType, NewUserModel, PostType } from "../../type/typeCast";
 import { db } from "./firebaseConfig";
 import { FollowNotificationTrigger, LikeNotificationTrigger } from "./Notification";
+import { showErrorToast, showSuccessToast } from "../utils/toast";
 
 //snapshot attach first time if uuid exists and after all the time it will update docs (if changes) Realtime
 
@@ -162,7 +163,11 @@ export const User_Upload_Comment = async (text: string, selectedPost: string, cu
     createdAt: serverTimestamp(),
     postid: selectedPost,
   }
-  await addDoc(commentRef, OwnerUser);
+  const docRef = await addDoc(commentRef, OwnerUser);
+
+  await updateDoc(doc(db, "comments", docRef.id), {
+    commentId: docRef.id,
+  });
   await updateDoc(postRef, { comment: increment(1) });
 }
 
@@ -209,80 +214,145 @@ export const Real_time_Notification = (user: any, setNotification: (val: any[]) 
 
 //Real Time Like listening:
 
-export const Real_time_Like=(user:any,setLikedPost:(val:any[])=>void)=>{
+export const Real_time_Like = (user: any, setLikedPost: (val: any[]) => void) => {
   const likeRef = collection(db, "Likes");
-      const unsubscribe = onSnapshot(likeRef, (snapshot) => {
-        const liked: string[] = [];
-        snapshot.docs.forEach((snap) => {
-          const Data = snap.data().post;
-          if (Data.includes(user?.uid)) {
-            liked.push(snap.id)
-          }
-        })
-        setLikedPost(liked);
-      });
-
-      return unsubscribe;
-  
+  const unsubscribe = onSnapshot(likeRef, (snapshot) => {
+    const liked: string[] = [];
+    snapshot.docs.forEach((snap) => {
+      const Data = snap.data().post;
+      if (Data.includes(user?.uid)) {
+        liked.push(snap.id)
+      }
+    })
+    setLikedPost(liked);
+  });
+  return unsubscribe;
 }
 
 //Real time updating following:
 
-export const Real_time_Following=(user:any, setFollowedUser:(val:any[])=>void)=>{
-   const followingRef = collection(db, "Followers");
-      const unsubscribe = onSnapshot(followingRef, (snapshot) => {
-        const followed: string[] = [];
-        snapshot.docs.forEach((snap) => {
-          const Data = snap.data().following;
-          if (Data.includes(user?.uid)) {
-            followed.push(snap.id)
-          }
-        })
-        setFollowedUser(followed);
-      });
+export const Real_time_Following = (user: any, setFollowedUser: (val: any[]) => void) => {
+  const followingRef = collection(db, "Followers");
+  const unsubscribe = onSnapshot(followingRef, (snapshot) => {
+    const followed: string[] = [];
+    snapshot.docs.forEach((snap) => {
+      const Data = snap.data().following;
+      if (Data.includes(user?.uid)) {
+        followed.push(snap.id)
+      }
+    })
+    setFollowedUser(followed);
+  });
   return unsubscribe;
 }
 
 //search USER:
 
-export const Search_User_Query=(userid:any,unsubscribeRef:any,setSearchUserPost:(val:PostType[])=>void)=>{
-   if (unsubscribeRef.current) {
-        unsubscribeRef.current();
-        unsubscribeRef.current = null;
-      }
-      const postRef = collection(db, "Posts");
-      const q = query(postRef, where("uuid", "==", userid), orderBy("createdAt", "desc"));
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        let postList: PostType[] = [];
-        snapshot.docs.forEach((snap) => {
-          const post = snap.data() as PostType;
-          postList.push(post);
-        });
-        setSearchUserPost(postList);
-      });
-      unsubscribeRef.current = unsubscribe;
+export const Search_User_Query = (userid: any, unsubscribeRef: any, setSearchUserPost: (val: PostType[]) => void) => {
+  if (unsubscribeRef.current) {
+    unsubscribeRef.current();
+    unsubscribeRef.current = null;
+  }
+  const postRef = collection(db, "Posts");
+  const q = query(postRef, where("uuid", "==", userid), orderBy("createdAt", "desc"));
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    let postList: PostType[] = [];
+    snapshot.docs.forEach((snap) => {
+      const post = snap.data() as PostType;
+      postList.push(post);
+    });
+    setSearchUserPost(postList);
+  });
+  unsubscribeRef.current = unsubscribe;
 }
 
-export const Search_UserInfo_Query=(userid:any, unsubscribeUserRef:any,setSearchUserInfo:(val:NewUserModel)=>void)=>{
-   if (unsubscribeUserRef.current) {
-        unsubscribeUserRef.current();
-        unsubscribeUserRef.current = null;
-      }
-      const userRef = doc(db, "users", userid);
-      const unsubscribe = onSnapshot(userRef, (userSnap) => {
-        if (userSnap.exists()) {
-          const userData = userSnap.data() as NewUserModel;
-          setSearchUserInfo(userData);
-        }
-      });
-      unsubscribeUserRef.current = unsubscribe;
+export const Search_UserInfo_Query = (userid: any, unsubscribeUserRef: any, setSearchUserInfo: (val: NewUserModel) => void) => {
+  if (unsubscribeUserRef.current) {
+    unsubscribeUserRef.current();
+    unsubscribeUserRef.current = null;
+  }
+  const userRef = doc(db, "users", userid);
+  const unsubscribe = onSnapshot(userRef, (userSnap) => {
+    if (userSnap.exists()) {
+      const userData = userSnap.data() as NewUserModel;
+      setSearchUserInfo(userData);
+    }
+  });
+  unsubscribeUserRef.current = unsubscribe;
 }
 
 
-//Current User Update:
+//Current User Update BIO:
 
 
-export const Update_Bio =async(text:string, user:any)=>{
-  const UserRef = doc(db, 'users',user.uid);
-  await updateDoc(UserRef,{bio:text});
+export const Update_Bio = async (text: string, user: any) => {
+  const UserRef = doc(db, 'users', user.uid);
+  await updateDoc(UserRef, { bio: text });
+}
+
+//Like Person's comment:
+
+export const Like_User_comment = async (userId: string, postId: string, commentId: string) => {
+  try {
+    const commentRef = doc(db, "comment", commentId);
+    const commentSnap = await getDoc(commentRef);
+
+    if (!commentSnap.exists()) {
+      await setDoc(commentRef, {
+        commentid: commentId,
+        postid: postId,
+        userid: [userId],
+        createdAt: serverTimestamp(),
+      });
+      return;
+    }
+
+    const data = commentSnap.data();
+    const likedUsers: string[] = data.userid || [];
+
+    if (likedUsers.includes(userId)) {
+      await updateDoc(commentRef, { userid: arrayRemove(userId) });
+    }
+    else {
+      await updateDoc(commentRef, { userid: arrayUnion(userId) });
+    }
+  } catch (error) {
+    console.error("Like comment error:", error);
+  }
+};
+
+//Real time comment of like listening:
+
+export const Real_time_Comment_Like = (user: any, postId: string, setCommentLikedPost: (val: string[]) => void) => {
+  if (!user?.uid || !postId) return;
+
+  const commentRef = collection(db, "comment");
+  const q = query(commentRef, where("postid", "==", postId));
+
+  const unsubscribe = onSnapshot(q, (snapshot) => {
+    const likedComments: string[] = [];
+
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      const likedUsers: string[] = data.userid || [];
+
+      if (likedUsers.includes(user.uid)) {
+        likedComments.push(doc.id);
+      }
+    });
+    setCommentLikedPost(likedComments);
+  });
+  return unsubscribe;
+};
+
+//Delete comment:
+
+export const deleteComment = async (id: string) => {
+  try {
+    const commentRef = doc(db, "comments", id);
+    await deleteDoc(commentRef);
+    showSuccessToast('Comment successfully deleted')
+  } catch (error: any) {
+    showErrorToast(error)
+  }
 }

@@ -19,9 +19,10 @@ type Props = {
     likedPost: string[];
     commentSheetModalPopUp: () => void
     commentSheetModalPopOut: () => void
+   
 }
 
-export default function HomeComponents({ setSelectedPost, commentSheetModalPopUp, commentSheetModalPopOut, LikePosts, likedPost, darkMode, Allposts, user, refreshPost, loading, setSearchUserUid, setOwner, setVisible }: Props) {
+export default function HomeComponents({ setSelectedPost, commentSheetModalPopUp,  LikePosts, likedPost, darkMode, Allposts, user, refreshPost, loading, setSearchUserUid, setOwner, setVisible }: Props) {
 
     const navigation = useNavigation();
 

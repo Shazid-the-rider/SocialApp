@@ -3,8 +3,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { PropsWithChildren, useContext, useEffect, useState } from 'react';
-import { Dimensions, StyleSheet } from 'react-native';
+import { PropsWithChildren, useContext, useEffect, useRef, useState } from 'react';
+import { Dimensions } from 'react-native';
 import { AuthContext } from './context/AuthContext';
 import { GlobalContext, GlobalContextApi } from './context/GlobalContext';
 import { auth, db } from './shared/services/firebaseConfig';
@@ -19,9 +19,13 @@ import SplashScreen from './src/feature/splash/screen/SplashScreen';
 import WaitScreen from './src/feature/wait/screen/WaitScreen';
 
 import { doc, setDoc } from 'firebase/firestore';
-import "./global.css";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import ChatList from './shared/screen/ChatList';
 import { registerForPushNotificationsAsync } from './shared/services/Notification';
+import * as Notifications from 'expo-notifications';
+import { addNotificationReceivedListener, addNotificationResponseReceivedListener } from './shared/services/Notification';
+import "./global.css";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const width = Dimensions.get('window').width;
@@ -83,7 +87,7 @@ function BottomStack() {
         options={{
           tabBarBadge: notification.length > 0 ? notification.length : 0,
           tabBarBadgeStyle: {
-            backgroundColor: 'red',
+            backgroundColor: notification.length === 0 ? 'transparent' : 'red',
             color: 'white',
             fontSize: 11,
             fontFamily: 'Poppins-Medium'
@@ -94,19 +98,34 @@ function BottomStack() {
   )
 }
 function AuthStack({ user }: PropsWithChildren<AuthStackProps>) {
+  const context = useContext(GlobalContextApi);
+  if (!context) {
+    return undefined;
+  }
+  const { actionlog, currentUser } = context;
+  const isSetupComplete = currentUser && currentUser.firstName && currentUser.image;
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {
-        user ? (
-          <>
-            <Stack.Screen name='Bottom' component={BottomStack} />
-            <Stack.Screen name="SetupUserinfo" component={UserinfoSetScreen} />
-            <Stack.Screen name="SetupImage" component={UserprofileimageScreen} />
-            <Stack.Screen name='Wait' component={WaitScreen} />
-            <Stack.Screen name='ChatList' component={ChatList} />
-          </>
-        ) : (<Stack.Screen name="LoginSignup" component={LoginSignup} options={{ gestureEnabled: false }} />)
-      }
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={user ? ((actionlog === 'signup' || !isSetupComplete) ? 'SetupUserinfo' : 'Bottom') : 'LoginSignup'}>
+      {!user ? (
+        <Stack.Screen
+          name="LoginSignup"
+          component={LoginSignup}
+          options={{ gestureEnabled: false }}
+        />
+      ) : (actionlog === 'signup' || !isSetupComplete) ? (
+        <>
+          <Stack.Screen name="SetupUserinfo" component={UserinfoSetScreen} options={{ gestureEnabled: false }} />
+          <Stack.Screen name="SetupImage" component={UserprofileimageScreen} options={{ gestureEnabled: false }} />
+          <Stack.Screen name="Wait" component={WaitScreen} options={{ gestureEnabled: false }} />
+          <Stack.Screen name="Bottom" component={BottomStack} />
+          <Stack.Screen name="ChatList" component={ChatList} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="Bottom" component={BottomStack} />
+          <Stack.Screen name="ChatList" component={ChatList} />
+        </>
+      )}
 
     </Stack.Navigator>
   );
@@ -114,10 +133,11 @@ function AuthStack({ user }: PropsWithChildren<AuthStackProps>) {
 
 
 export default function App() {
-  //const navigation = useNavigation();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [showSplash, setShowSplash] = useState<boolean>(true);
+  const notificationListener = useRef<any>(null);
+  const responseListener = useRef<any>(null);
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSplash(false);
@@ -146,21 +166,48 @@ export default function App() {
     return unsub;
   }, []);
 
+  // Notification listeners
+  useEffect(() => {
+    // Handle notifications when received
+    notificationListener.current = addNotificationReceivedListener(notification => {
+      console.log('Notification received:', notification);
+      // You can add custom handling here
+    });
+
+    // Listen for notification interactions
+    responseListener.current = addNotificationResponseReceivedListener(response => {
+      console.log('Notification response received:', response);
+      // You can add custom handling here
+    });
+
+    return () => {
+      if (notificationListener.current) {
+        notificationListener.current.remove();
+      }
+      if (responseListener.current) {
+        responseListener.current.remove();
+      }
+    };
+  }, []);
+
   return (
 
-    <AuthContext.Provider value={{ user }}>
-      <GlobalContext>
-        <NavigationContainer>
-          {showSplash ? (
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="SplashScreen" component={SplashScreen} />
-            </Stack.Navigator>
-          ) : (
-            <AuthStack user={user} />
-          )}
-        </NavigationContainer>
-      </GlobalContext>
-    </AuthContext.Provider>
+    <SafeAreaProvider>
+      <AuthContext.Provider value={{ user }}>
+        <GlobalContext>
+          <NavigationContainer>
+            {showSplash ? (
+              <Stack.Navigator screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="SplashScreen" component={SplashScreen} />
+              </Stack.Navigator>
+            ) : (
+              <AuthStack user={user} />
+            )}
+          </NavigationContainer>
+          <Toast />
+        </GlobalContext>
+      </AuthContext.Provider>
+    </SafeAreaProvider>
   );
 }
 

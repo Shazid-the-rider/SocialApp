@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { PostType } from "../../../../type/typeCast";
 
+
 type Props = {
     editViewImageModal: boolean;
     EditViewImageModalPopOut: () => void;

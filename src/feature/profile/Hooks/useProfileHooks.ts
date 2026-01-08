@@ -11,6 +11,7 @@ import { db } from "../../../../shared/services/firebaseConfig";
 import { uploadToCloudinary } from "../../../../shared/services/uploadToCloudinary";
 import { PostType } from "../../../../type/typeCast";
 import { customFonts } from "../../../utils/fonts";
+import { showErrorToast, showSuccessToast } from "../../../../shared/utils/toast";
 
 const height = Dimensions.get('window').height;
 
@@ -31,8 +32,6 @@ export default function useProfileHooks() {
     const [status, setStatus] = useState(false); // after uploading post success message
 
     const [type, setType] = useState("photo");// types that i want to acess from gallery
-
-    const [message, setMessage] = useState<string>("");//any types of error message shown
 
     const [focus, setFocus] = useState(false); // Large Scale TextInput view
 
@@ -97,32 +96,7 @@ export default function useProfileHooks() {
 
 
 
-    //notification anim
-
-    const notifyPopOut = () => {
-        return Animated.timing(notify, {
-            toValue: -height,
-            duration: 500,
-            useNativeDriver: false
-        }).start(() => {
-            if (status) {
-                setStatus(false);
-            }
-            setEditProfileModal(false);
-            setCreatePostModal(false)
-        })
-    }
-    const notifyPopUp = () => {
-        return Animated.timing(notify, {
-            toValue: 20,
-            duration: 500,
-            useNativeDriver: false
-        }).start(() => {
-            setTimeout(() => {
-                notifyPopOut()
-            }, 1000)
-        })
-    }
+    
     const PostModalPopUp = () => {
         setCreatePostModal(true);
     }
@@ -195,9 +169,8 @@ export default function useProfileHooks() {
         }
         const net = await NetInfo.fetch()
         if (!net.isConnected) {
-            setMessage("No internet connection");
             setStatus(false);
-            notifyPopUp();
+            showErrorToast('No internet connection')
             return;
         }
         try {
@@ -216,7 +189,6 @@ export default function useProfileHooks() {
                 post: selectedImage ? type === 'photo' ? 'photo' : 'reel' : 'status'
             }
             setStatus(true);
-            setMessage("Successfully posted")
             const docRef = await addDoc(collection(db, 'Posts'), newPost);
             await updateDoc(doc(db, "Posts", docRef.id), {
                 id: docRef.id
@@ -228,12 +200,10 @@ export default function useProfileHooks() {
             setDes("");
             setSelectedImage("");
             imageUrl = "";
-            notifyPopUp();
+            showSuccessToast('Post successfuly uploaded')
 
         } catch (e: any) {
-            setMessage(e.message);
-            console.log(e.message);
-            notifyPopUp();
+            showErrorToast(e.message);
         }
     }
 
@@ -251,9 +221,8 @@ export default function useProfileHooks() {
         }
         const net = await NetInfo.fetch()
         if (!net.isConnected) {
-            setMessage("No internet connection");
             setStatus(false);
-            notifyPopUp();
+            showErrorToast('No internet connection')
             return;
         }
         const postRef = doc(db, "Posts", postid);
@@ -262,14 +231,14 @@ export default function useProfileHooks() {
         await updateDoc(userRef, {
             uploadpost: increment(-1)
         });
-
+        showSuccessToast('Successfully post deleted')
     }
 
     return {
 
         commentSheetModalPopUp, updatePost, darkMode, user, postType, setPostType, selectedImage, setSelectedImage, des, setDes, selectedImageUrl, setSelectedImageUrl, status, setStatus,
-        type, setType, message, setMessage, focus, setFocus, posts, setPosts, viewImage, setViewImage, fonts, notify,
-        currentUser, notifyPopUp, notifyPopOut, PickFile, UploadPost, postUid, setPostUid, selectedPost, setSelectedPost, HandlePostDelete, EditPostAnim,
+        type, setType, focus, setFocus, posts, setPosts, viewImage, setViewImage, fonts, notify,
+        currentUser, PickFile, UploadPost, postUid, setPostUid, selectedPost, setSelectedPost, HandlePostDelete, EditPostAnim,
         currentStatus, setCurrentStatus, PostModalPopUp, PostModalPopOut, createPostModal, EditProfileModalPopUp, EditProfileModalPopOut,
         editProfileModal, editPostModal, EditPostModalPopUp, EditPostModalPopOut, editViewImageModal, EditViewImageModalPopOut, EditViewImageModalPopUp,
         optionModal, OptionModalPopUp, OptionModalPopOut, likedPost, LikePosts,userBio

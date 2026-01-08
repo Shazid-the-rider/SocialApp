@@ -154,7 +154,7 @@ export default function UserprofileImageSet() {
             <TouchableOpacity style={styles.setimage} activeOpacity={.6}
                 onPress={() => UploadImage()}
             >
-                <Text style={{ fontSize: 18, fontFamily: 'Poppins-Medium' }}>Set profile picture</Text>
+                <Text style={{ fontSize: 15, fontFamily: 'Poppins-Medium', color: 'white' }}>Set profile picture</Text>
             </TouchableOpacity>
             <Animated.View style={[styles.popupOp, { bottom: imageOption }]}>
                 <TouchableOpacity style={styles.linebox} onPress={() => ImageOptionPopOut()}>
@@ -162,11 +162,11 @@ export default function UserprofileImageSet() {
                 </TouchableOpacity>
                 <View style={styles.optionbox}>
                     <TouchableOpacity style={styles.design} onPress={() => { captureImage(); ImageOptionPopOut() }}>
-                        <Entypo name="camera" size={35} color="black" />
+                        <Entypo name="camera" size={28} color="black" />
                         <Text style={styles.font}>Camera</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.design} onPress={() => { pickImage(); ImageOptionPopOut() }}>
-                        <Entypo name="image-inverted" size={35} color="black" />
+                        <Entypo name="image-inverted" size={28} color="black" />
                         <Text style={styles.font}>Gallery</Text>
                     </TouchableOpacity>
                 </View>
@@ -246,7 +246,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: .4,
         borderColor: 'rgba(187, 186, 186, 0.88)',
-        borderRadius: 20
+        borderRadius: 20,
+        backgroundColor: 'black'
     },
 
     line: {

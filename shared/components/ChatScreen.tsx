@@ -11,8 +11,9 @@ type Props = {
     user: any;
     inputWidth: number;
     messages: IMessage[];
+    darkMode: boolean;
 }
-export const ChatScreenModal = ({ visible, ChatScreenModalPopOut, otherUser, handleSend, currentUser, user, messages, inputWidth }: Props) => {
+export const ChatScreenModal = ({ darkMode, visible, ChatScreenModalPopOut, otherUser, handleSend, currentUser, user, messages, inputWidth }: Props) => {
     return (
         <View>
             <Modal
@@ -22,14 +23,14 @@ export const ChatScreenModal = ({ visible, ChatScreenModalPopOut, otherUser, han
                 onRequestClose={ChatScreenModalPopOut}
             >
 
-                <KeyboardAvoidingView style={{ flex: 1, justifyContent: 'flex-start' }} behavior="padding">
-                    <View className={" w-[100%] bg-white  z-40 bottom-0 pt-[20px] h-[100%] "} >
-                        <View className="relative h-[60px] px-[10px] w-full justify-center mb-[20px]">
+                <KeyboardAvoidingView style={{ flex: 1, justifyContent: 'flex-start', backgroundColor: darkMode ? 'rgb(18,18,18)' : 'white' }} behavior="padding">
+                    <View className={darkMode ? " w-[100%] bg-[rgb(18,18,18)]  z-40 bottom-0 pt-[20px] h-[100%] " : " w-[100%] bg-white  z-40 bottom-0 pt-[20px] h-[100%] "} >
+                        <View className="relative h-[70px] px-[10px] w-full justify-center mb-[20px]">
                             <TouchableOpacity className="absolute left-4 z-10 px-[10px]" onPress={() => ChatScreenModalPopOut()}>
-                                <Ionicons name="chevron-back" size={24} color="black" />
+                                <Ionicons name="chevron-back" size={24} color={darkMode ? 'white' : 'black'} />
                             </TouchableOpacity>
                             <View className="w-full items-center">
-                                <Text className="text-[17px] font-[Poppins-SemiBold]">
+                                <Text className={darkMode ? "text-[17px] font-[Poppins-SemiBold] text-[white]" : "text-[17px] font-[Poppins-SemiBold]"}>
                                     {otherUser?.firstName} {otherUser?.lastName}
                                 </Text>
                             </View>
@@ -37,7 +38,7 @@ export const ChatScreenModal = ({ visible, ChatScreenModalPopOut, otherUser, han
                         <View className="gap-[10] items-center">
                             <Image source={{ uri: otherUser?.image }} style={{ height: 100, width: 100, borderRadius: 80 }} />
                             <View className="flex-row gap-[5] items-center">
-                                <Text className="text-[17px] font-[Poppins-SemiBold]">{otherUser?.firstName} {otherUser?.lastName}</Text>
+                                <Text className={darkMode ? "text-[17px] font-[Poppins-SemiBold] text-[white]" : "text-[17px] font-[Poppins-SemiBold]"}>{otherUser?.firstName} {otherUser?.lastName}</Text>
                                 <MaterialIcons name="verified" size={16} color="blue" />
                             </View>
                         </View>
@@ -55,7 +56,7 @@ export const ChatScreenModal = ({ visible, ChatScreenModalPopOut, otherUser, han
                                 <InputToolbar
                                     {...props}
                                     containerStyle={{
-                                        backgroundColor: "white",
+                                        backgroundColor: darkMode ? "rgb(18,18,18)" : "white",
                                         marginLeft: 20,
                                         marginRight: 20,
                                         marginBottom: 20,
@@ -76,8 +77,9 @@ export const ChatScreenModal = ({ visible, ChatScreenModalPopOut, otherUser, han
                                     borderRadius: 10,
                                     paddingHorizontal: 15,
                                     fontSize: 16,
-                                    backgroundColor: "#f0f0f0",
+                                    backgroundColor: darkMode ? 'rgb(30,30,30)' : "#f0f0f0",
                                     textAlignVertical: "center",
+                                    color: darkMode ? 'white' : 'black'
                                 },
                                 placeholder: "Type a message...",
                             }}
@@ -91,19 +93,19 @@ export const ChatScreenModal = ({ visible, ChatScreenModalPopOut, otherUser, han
                                         paddingHorizontal: 10,
                                     }}
                                 >
-                                    <MaterialIcons name="send" size={26} color="#4e9af1" />
+                                    <MaterialIcons name="send" size={26} color={darkMode ? 'rgb(190,0,0)' : "#4e9af1"} />
                                 </Send>
                             )}
                             renderBubble={(props) => (
                                 <Bubble
                                     {...props}
                                     wrapperStyle={{
-                                        right: { backgroundColor: 'black' }, // Sent messages
-                                        left: { backgroundColor: '#e5e5e5' },   // Received messages
+                                        right: { backgroundColor: darkMode ? 'rgb(190,0,0)' : 'black' }, // Sent messages
+                                        left: { backgroundColor: darkMode ? 'rgb(190,0,190)' : '#e5e5e5' },   // Received messages
                                     }}
                                     textStyle={{
-                                        right: { color: '#fff', fontFamily: 'Poppins-SemiBold', fontSize: 15 },
-                                        left: { color: '#000', fontFamily: 'Poppins-SemiBold', fontSize: 15 },
+                                        right: { color: '#fff', fontFamily: 'Poppins-Medium', fontSize: 15 },
+                                        left: { color: '#000', fontFamily: 'Poppins-Medium', fontSize: 15 },
                                     }}
                                 />
                             )}

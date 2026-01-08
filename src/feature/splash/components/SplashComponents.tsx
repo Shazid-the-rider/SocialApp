@@ -9,8 +9,8 @@ export default function SplashComponent() {
 
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <View style={{ display: 'flex', flexDirection: 'row', gap: 2, alignItems: 'center', justifyContent: 'center', }}>
-                <Text style={{ fontSize: 40, fontWeight: 700, }}>L</Text>
+            <View style={{ display: 'flex', flexDirection: 'row', gap: 3, alignItems: 'center', justifyContent: 'center', }}>
+                <Text style={{ fontSize: 40, fontWeight: 700, }} className="text-red-500">L</Text>
                 <Text style={{ fontSize: 40, fontWeight: 700, }}>o</Text>
                 <Text style={{ fontSize: 40, fontWeight: 700, }}>o</Text>
                 <Text style={{ fontSize: 40, fontWeight: 700, }}>p</Text>

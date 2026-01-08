@@ -1,15 +1,17 @@
 import { doc, updateDoc } from "firebase/firestore";
 import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import { db } from "../shared/services/firebaseConfig";
-import { fetchPostsAndRelatedUserWIthMapping, Real_time_Following, Real_time_Like, Real_time_Notification, Real_time_updating_comment, refreshNewsFeed, Search_User_Query, Search_UserInfo_Query, Update_Bio, User_doing_Follow, User_Post_Like, User_Upload_Comment, userInfoFetchAndRealTimeUpdate } from "../shared/services/firebaseCrudService";
+import { fetchPostsAndRelatedUserWIthMapping, Like_User_comment, Real_time_Comment_Like, Real_time_Following, Real_time_Like, Real_time_Notification, Real_time_updating_comment, refreshNewsFeed, Search_User_Query, Search_UserInfo_Query, Update_Bio, User_doing_Follow, User_Post_Like, User_Upload_Comment, userInfoFetchAndRealTimeUpdate } from "../shared/services/firebaseCrudService";
 import { AllPostType, chatUserModel, GlobalContextType, NewUserModel, PostType } from "../type/typeCast";
 import { AuthContext } from "./AuthContext";
+import { showErrorToast, showSuccessToast } from "../shared/utils/toast";
 
 
 export const GlobalContextApi =
   createContext<GlobalContextType | undefined>(undefined);
 
 export const GlobalContext: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [commentLike, setCommentLikedPost] = useState<string[]>([]);
   const [commentSheet, setCommentSheet] = useState(false);
   const [newUser, setNewUser] = useState<NewUserModel | undefined>(undefined);
   const [currentUser, setCurrentuser] = useState<NewUserModel | undefined>(undefined); // loggedin user
@@ -21,7 +23,7 @@ export const GlobalContext: React.FC<{ children: ReactNode }> = ({ children }) =
   const [searchUserUid, setSearchUserUid] = useState<string>("");
   const [notification, setNotification] = useState<any[]>([]);
   const { user } = useContext(AuthContext);
-  const [actionlog, setAction] = useState<string>("login");
+  const [actionlog, setAction] = useState<string>("");
   const [Allposts, setPosts] = useState<AllPostType[]>([]);
   const [loading, setLoading] = useState(false);
   const [likedPost, setLikedPost] = useState<string[]>([]);
@@ -55,12 +57,6 @@ export const GlobalContext: React.FC<{ children: ReactNode }> = ({ children }) =
       setAction("");
     }
   }, [user])
-
-  useEffect(() => {
-    console.log(owner)
-  }, [owner])
-
-
 
 
   //Fetch userPosts with userInformation (two table -- (posts)-->post.uid--->to (users))
@@ -156,9 +152,11 @@ export const GlobalContext: React.FC<{ children: ReactNode }> = ({ children }) =
       await updateDoc(postRef, {
         des: status,
       });
+      showSuccessToast('Post updated Successfull')
     }
-    catch (e) {
+    catch (e: any) {
       console.error("Error updating post:", e);
+      showErrorToast(e.message);
     }
   }
 
@@ -195,6 +193,7 @@ export const GlobalContext: React.FC<{ children: ReactNode }> = ({ children }) =
   useEffect(() => {
     if (!selectedPost) return;
 
+    setComments([]); 
     const unsubscribe = Real_time_updating_comment(setComments, selectedPost);
 
     return () => unsubscribe();
@@ -202,19 +201,34 @@ export const GlobalContext: React.FC<{ children: ReactNode }> = ({ children }) =
 
   // updateBio :
 
-  const userBio = (text: string)=>{
+  const userBio = (text: string) => {
     if (!user) {
       return;
     }
     Update_Bio(text, user);
   }
 
+
+  //Like user comment:
+
+  const UserCommentReaction = async (userid: string, postId: string, commentid: string) => {
+    await Like_User_comment(userid, postId, commentid)
+  }
+
+  //Relatime listening user Like:
+
+  useEffect(() => {
+    const unsub = Real_time_Comment_Like(user, selectedPost, setCommentLikedPost);
+    return () => unsub && unsub();
+  }, [user?.uid, selectedPost]);
+
+
   return (
     <GlobalContextApi.Provider value={{
-      commentSheetModalPopOut, commentSheetModalPopUp, commentSheet, setSelectedPost, comments, UploadComment,
+      commentSheetModalPopOut, commentLike, commentSheetModalPopUp, commentSheet, setSelectedPost, comments, UploadComment, UserCommentReaction,
       Following, updatePost, likedPost, LikePosts, loading, darkMode, setDarkMode, refreshPost, Allposts, newUser, setNewUser, actionlog, toggleAction, currentUser, searchUserUid, setSearchUserUid,
       search_User_And_Find_its_Info, search_User_And_Find_its_Post, searchUserInfo, searchUserpost, owner, setOwner, followedUser, visible, usersForChat,
-      setUsersForChat,userBio, notification, setNotification, setSearchUserInfo, setSearchUserPost, setCurrentuser, setLikedPost, setFollowedUser
+      setUsersForChat, userBio, notification, setNotification, setSearchUserInfo, setSearchUserPost, setCurrentuser, setLikedPost, setFollowedUser
     }}>
       {children}
     </GlobalContextApi.Provider>

@@ -4,6 +4,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { customFonts } from "../../../utils/fonts";
 import { Animated, Dimensions } from "react-native";
 import { GlobalContextApi } from "../../../../context/GlobalContext";
+import { showErrorToast, showSuccessToast } from "../../../../shared/utils/toast";
 
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
@@ -34,64 +35,10 @@ export default function useUserinfoSetHook() {
     const bottomGenderAnim = useRef(new Animated.Value(-height)).current;
     const info1 = useRef(new Animated.Value(0)).current;
     const button = useRef(new Animated.Value(0)).current;
-    useEffect(() => {
-        Animated.sequence([
-            Animated.parallel([
-                Animated.timing(headerAnim, {
-                    toValue: 1,
-                    duration: 2000,
-                    useNativeDriver: true
-                }),
-                Animated.timing(info1, {
-                    toValue: 1,
-                    duration: 2000,
-                    useNativeDriver: true
-                }),
-            ]),
-            Animated.timing(button, {
-                toValue: 1,
-                duration: 2000,
-                useNativeDriver: true
-            }),
-        ]).start()
 
-    }, []);
 
     if (!fonts) {
         return null;
-    }
-
-    useEffect(() => {
-        if (success) {
-            notifypopupAnim();
-            const id = notificationpopup.addListener(({ value }) => {
-                currentValue = value;
-            });
-            setTimeout(() => {
-                navigation.navigate("SetupImage" as never)
-            }, 3000);
-            notificationpopup.removeListener(id)
-            return () => notificationpopup.removeListener(id)
-        }
-    }, [success]);
-
-    const notifypopout = () => {
-        return Animated.timing(notificationpopup, {
-            toValue: -100,
-            duration: 200,
-            useNativeDriver: false
-        }).start()
-    }
-    const notifypopupAnim = () => {
-        return Animated.timing(notificationpopup, {
-            toValue: 20,
-            duration: 200,
-            useNativeDriver: false
-        }).start(() => {
-            setTimeout(() => {
-                notifypopout();
-            }, 1000)
-        })
     }
 
     const PopUp = () => {
@@ -134,31 +81,26 @@ export default function useUserinfoSetHook() {
         setLastNameError("");
 
         if (firstName.trim() === "" || lastName.trim() === "" || gender.trim() === "" || !dob) {
-            setBlankError("Please fill all information");
-            notifypopupAnim();
+            showErrorToast('Please fill all information')
             return;
         }
 
         if (!isValidName(firstName)) {
-            setFirstNameError("First name must contain only letters");
-            notifypopupAnim();
+            showErrorToast("First name must contain only letters")
             return;
         }
 
         if (!isValidName(lastName)) {
-            setLastNameError("Last name must contain only letters");
-            notifypopupAnim();
+            showErrorToast("Last name must contain only letters")
             return;
         }
         if (firstName.length < 2) {
-            setFirstNameError("First name must be at least 2 characters");
-            notifypopupAnim();
+            showErrorToast("First name must be at least 2 characters")
             return;
         }
 
         if (lastName.length < 2) {
-            setLastNameError("Last name must be at least 2 characters");
-            notifypopupAnim();
+            showErrorToast("Last name must be at least 2 characters");
             return;
         }
 
@@ -181,8 +123,8 @@ export default function useUserinfoSetHook() {
                     gender,
                 }
             });
-            setSuccess("Successfully Updated");
-            notifypopupAnim();
+            showSuccessToast('Successfully updated information. Further proceeding');
+            navigation.navigate('SetupImage' as never)
         }
     };
 
@@ -211,8 +153,6 @@ export default function useUserinfoSetHook() {
         popOut,
         PopUpGender,
         popOutGender,
-        notifypopout,
-        notifypopupAnim,
         HandleSetUpInfo
     }
 }

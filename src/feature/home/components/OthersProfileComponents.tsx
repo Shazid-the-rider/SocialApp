@@ -4,6 +4,7 @@ import { NewUserModel, PostType } from "../../../../type/typeCast";
 import { Timestamp } from "firebase/firestore";
 import { FollowNotificationTrigger } from "../../../../shared/services/Notification";
 import CommentSheet from "../../../../shared/components/CommentSheet";
+import { useNavigation } from "@react-navigation/native";
 type Props = {
     darkMode: boolean;
     visible: boolean;
@@ -18,9 +19,11 @@ type Props = {
     Following: (val: string) => Promise<void>;
     user: any;
     followedUser: string[];
-    commentSheetModalPopUp: () => void
+    commentSheetModalPopUp: () => void;
+    setSelectedPost: (val: string) => void
 }
-export default function OthersProfileComponents({ commentSheetModalPopUp, user, followedUser, Following, searchUserUid, darkMode, visible, searchUserInfo, setVisible, postType, setPostType, filterdata, likedPost, LikePosts }: Props) {
+export default function OthersProfileComponents({ setSelectedPost, commentSheetModalPopUp, user, followedUser, Following, searchUserUid, darkMode, visible, searchUserInfo, setVisible, postType, setPostType, filterdata, likedPost, LikePosts }: Props) {
+    const navigation = useNavigation();
     return (
         <View>
             <Modal
@@ -62,18 +65,22 @@ export default function OthersProfileComponents({ commentSheetModalPopUp, user, 
                                     <Ionicons name="notifications" size={17} color="white" />
                                     <Text className="text-[16px] font-[Poppins-Medium] text-[white]">{followedUser.includes(searchUserUid) ? 'Following' : 'Follow'}</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity className="w-[47%] bg-blue-600 justify-center items-center py-[10px] rounded-xl flex-row gap-[5]">
+                                <TouchableOpacity className="w-[47%] bg-blue-600 justify-center items-center py-[10px] rounded-xl flex-row gap-[5]" onPress={() => {
+                                    setVisible(false); setTimeout(() => {
+                                        navigation.navigate('ChatList' as never)
+                                    }, 500)
+                                }}>
                                     <FontAwesome5 name="facebook-messenger" size={17} color="white" />
                                     <Text className="text-[16px] font-[Poppins-Medium] text-[white]">Message</Text>
                                 </TouchableOpacity>
                             </View>
                             <View className="w-[100%]">
                                 <View className="w-[100%] flex-row gap-[20] justify-start mt-[10px]">
-                                    <TouchableOpacity className={darkMode ? postType === 'photo' ? " w-[35%] bg-[#2525255c] flex-row justify-center items-center gap-[10]  px-[10px]  py-[7px] rounded-3xl" : "w-[30%] flex-row  justify-center items-center gap-[6]  px-[10px]  py-[7px] rounded-3xl" : postType === 'photos' ? " w-[35%] flex-row justify-center items-center gap-[10] bg-gray-200  border-gray-100 px-[10px]  py-[7px] rounded-3xl" : "w-[30%] flex-row  justify-center items-center gap-[6] border-2 border-gray-100 px-[10px]  py-[7px] rounded-3xl"} activeOpacity={.7} onPress={() => setPostType('photo')}>
+                                    <TouchableOpacity className={darkMode ? postType === 'photo' ? " w-[35%] bg-[#2525255c] flex-row justify-center items-center gap-[10]  px-[10px]  py-[7px] rounded-3xl" : "w-[30%] flex-row  justify-center items-center gap-[6]  px-[10px]  py-[7px] rounded-3xl" : postType === 'photo' ? " w-[35%] flex-row justify-center items-center gap-[10] bg-gray-200  border-gray-100 px-[10px]  py-[7px] rounded-3xl" : "w-[30%] flex-row  justify-center items-center gap-[6] border-2 border-gray-100 px-[10px]  py-[7px] rounded-3xl"} activeOpacity={.7} onPress={() => setPostType('photo')}>
                                         <Ionicons name="images-sharp" size={17} color={darkMode ? "white" : "black"} />
                                         <Text className={darkMode ? "text-[15px] font-[Poppins-Medium] text-white" : "text-[15px] font-[Poppins-Medium]"}>Photos</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity className={darkMode ? postType === 'status' ? " w-[35%] bg-[#2525255c] flex-row justify-center items-center gap-[10]  px-[10px]  py-[7px] rounded-3xl" : "w-[30%] flex-row  justify-center items-center gap-[6]  px-[10px]  py-[7px] rounded-3xl" : postType === 'photos' ? " w-[35%] flex-row justify-center items-center gap-[10] bg-gray-200  border-gray-100 px-[10px]  py-[7px] rounded-3xl" : "w-[30%] flex-row  justify-center items-center gap-[6] border-2 border-gray-100 px-[10px]  py-[7px] rounded-3xl"} activeOpacity={.7} onPress={() => setPostType('status')}>
+                                    <TouchableOpacity className={darkMode ? postType === 'status' ? " w-[35%] bg-[#2525255c] flex-row justify-center items-center gap-[10]  px-[10px]  py-[7px] rounded-3xl" : "w-[30%] flex-row  justify-center items-center gap-[6]  px-[10px]  py-[7px] rounded-3xl" : postType === 'status' ? " w-[35%] flex-row justify-center items-center gap-[10] bg-gray-200  border-gray-100 px-[10px]  py-[7px] rounded-3xl" : "w-[30%] flex-row  justify-center items-center gap-[6] border-2 border-gray-100 px-[10px]  py-[7px] rounded-3xl"} activeOpacity={.7} onPress={() => setPostType('status')}>
                                         <MaterialCommunityIcons name="post" size={17} color={darkMode ? "white" : "black"} />
                                         <Text className={darkMode ? "text-[15px] font-[Poppins-Medium] text-white" : "text-[15px] font-[Poppins-Medium]"}>Status</Text>
                                     </TouchableOpacity>
@@ -122,7 +129,7 @@ export default function OthersProfileComponents({ commentSheetModalPopUp, user, 
                                                                 <MaterialCommunityIcons name="cards-heart" size={20} color={likedPost.includes(item.id) ? "red" : darkMode ? 'white' : 'black'} />
                                                                 <Text className={darkMode ? "font-[Poppins-Medium] text-[white] text-[16px]" : "font-[Poppins-Medium] text-[16px]"}>{item.like}</Text>
                                                             </TouchableOpacity>
-                                                            <TouchableOpacity className="flex-row gap-[10] items-center" onPress={() => commentSheetModalPopUp()}>
+                                                            <TouchableOpacity className="flex-row gap-[10] items-center" onPress={() => { setSelectedPost(item.id); commentSheetModalPopUp() }}>
                                                                 <MaterialCommunityIcons name="comment-multiple" size={20} color={darkMode ? 'white' : "black"} />
                                                                 <Text className={darkMode ? "font-[Poppins-Medium] text-[16px] text-[white]" : "font-[Poppins-Medium] text-[16px]"}>{item.comment}</Text>
                                                             </TouchableOpacity>

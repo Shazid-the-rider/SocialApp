@@ -25,11 +25,12 @@ export type NewUserModel = {
 };
 
 export type GlobalContextType = {
-    userBio:(val:string)=>void;
-    UploadComment:(val:string)=>void;
-    comments:any[];
-    setSelectedPost:(val:string)=>void;
-    commentSheet:boolean;
+    userBio: (val: string) => void;
+    UserCommentReaction: (val: string, val1: string,val2:string) => Promise<void>
+    UploadComment: (val: string) => void;
+    comments: any[];
+    setSelectedPost: (val: string) => void;
+    commentSheet: boolean;
     newUser: NewUserModel | undefined;
     currentUser: NewUserModel | undefined;
     setNewUser: React.Dispatch<React.SetStateAction<NewUserModel | undefined>>;
@@ -64,7 +65,8 @@ export type GlobalContextType = {
     setSearchUserPost: (val: PostType[]) => void;
     setCurrentuser: (val: NewUserModel) => void;
     setLikedPost: (val: string[]) => void;
-    setFollowedUser: (val: string[]) => void
+    setFollowedUser: (val: string[]) => void;
+    commentLike:string[];
 };
 
 export type AllPostType = {

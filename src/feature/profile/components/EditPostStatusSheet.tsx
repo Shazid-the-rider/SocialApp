@@ -11,8 +11,9 @@ type Props = {
     currentUser: any;
     postUid: string;
     updatePost: (postid: string, status: string) => Promise<void>
+    darkMode: boolean;
 }
-export const EditPostStatusSheet = React.memo(({updatePost, postUid, currentUser, currentStatus, setCurrentStatus, editPostModal, EditPostModalPopOut }: Props) => {
+export const EditPostStatusSheet = React.memo(({ updatePost, darkMode, postUid, currentUser, currentStatus, setCurrentStatus, editPostModal, EditPostModalPopOut }: Props) => {
     const [keyboardVisible, setKeyboardVisible] = useState(false);
     const [update, setUpdate] = useState(false);
     useEffect(() => {
@@ -35,10 +36,10 @@ export const EditPostStatusSheet = React.memo(({updatePost, postUid, currentUser
             statusBarTranslucent
             onRequestClose={EditPostModalPopOut}
         >
-            <View className="h-[100%] w-[100%] absolute bg-white z-40 px-[20px] shadow-md">
+            <View className={darkMode ? "h-[100%] w-[100%] absolute bg-[rgb(18,18,18)] z-40 px-[20px] shadow-md" : "h-[100%] w-[100%] absolute bg-white z-40 px-[20px] shadow-md"}>
                 <View className="flex-row justify-between h-[50px] items-center mt-[20px] mb-[20px]">
                     <TouchableOpacity onPress={() => { Keyboard.dismiss(); setUpdate(false); EditPostModalPopOut() }}>
-                        <Text className="font-[Poppins-Medium] text-[14px]">Cancel</Text>
+                        <Text className={darkMode ? "font-[Poppins-Medium] text-[white] text-[14px]" : "font-[Poppins-Medium] text-[14px]"}>Cancel</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => { updatePost(postUid, currentStatus); EditPostModalPopOut() }}>
                         <Text className={(update && currentStatus.length > 0) ? "font-[Poppins-Medium] text-[14px] text-sky-700" : "font-[Poppins-Medium] text-[14px] text-gray-400"}>Update</Text>
@@ -50,18 +51,19 @@ export const EditPostStatusSheet = React.memo(({updatePost, postUid, currentUser
                             <Image className="h-[30px] w-[30px] rounded-full" source={{ uri: currentUser.image }} />
                             <View>
                                 <View className="flex-row gap-[5px] items-center">
-                                    <Text className="font-[Poppins-Medium] text-[14px]">{currentUser.firstName} {currentUser.lastName}</Text>
+                                    <Text className={darkMode ? "font-[Poppins-Medium] text-[white] text-[14px]" : "font-[Poppins-Medium] text-[14px]"}>{currentUser.firstName} {currentUser.lastName}</Text>
                                     <MaterialIcons name="verified" size={15} color="blue" />
                                 </View>
                                 <View className="flex-row gap-[10]">
-                                    <Text className="font-[Poppins-Medium] text-[12px]">Public</Text>
+                                    <Text className={darkMode ? "font-[Poppins-Medium] text-[white] text-[12px]" : "font-[Poppins-Medium] text-[12px]"}>Public</Text>
                                     <FontAwesome name="globe" size={15} color="grey" />
                                 </View>
                             </View>
                         </View>
                         <View className={keyboardVisible ? "flex-[.5] mt-[20px]" : "flex-[.95] mt-[20px]"}>
-                            <TextInput value={currentStatus} multiline className={currentStatus.length > 100 ? "font-[Poppins-Medium] text-[16px]" : "font-[Poppins-Medium] text-[22px]"}
+                            <TextInput placeholderTextColor={'rgb(130,130,130)'} value={currentStatus} multiline className={currentStatus.length > 100 ? darkMode ? "font-[Poppins-Medium] text-[white] text-[16px]" : "font-[Poppins-Medium] text-[16px]" : darkMode ? "font-[Poppins-Medium] text-[white] text-[18px]" : "font-[Poppins-Medium] text-[18px]"}
                                 onChangeText={(text) => { setUpdate(true); setCurrentStatus(text) }}
+                                placeholder="Enter your thought ..."
                             />
                         </View>
                     </View>

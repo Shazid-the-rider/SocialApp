@@ -12,7 +12,7 @@ export default function useHomeHooks() {
     if (!context) {
         return undefined;
     }
-    const { darkMode, Following, followedUser, setSelectedPost, commentSheetModalPopUp, commentSheetModalPopOut, searchUserUid, likedPost, Allposts, refreshPost, loading, LikePosts, setSearchUserUid, setOwner, search_User_And_Find_its_Info, search_User_And_Find_its_Post, searchUserInfo, searchUserpost, owner } = context;
+    const { darkMode, Following, followedUser,setSelectedPost, commentSheetModalPopUp, commentSheetModalPopOut, searchUserUid, likedPost, Allposts, refreshPost, loading, LikePosts, setSearchUserUid, setOwner, search_User_And_Find_its_Info, search_User_And_Find_its_Post, searchUserInfo, searchUserpost, owner } = context;
     useEffect(() => {
         if (searchUserUid) {
             search_User_And_Find_its_Info(searchUserUid);

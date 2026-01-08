@@ -1,113 +1,17 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Image, ScrollView, Text, TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { ActivityIndicator, FlatList, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import { IMessage } from "react-native-gifted-chat";
-import { AuthContext } from "../../context/AuthContext";
-import { GlobalContextApi } from "../../context/GlobalContext";
-import { UserChat } from "../../type/chat";
-import { ChatScreenModal } from "../components/ChatScreen";
-import { GetAllUSerForChat, getOrCreateChatRoom, sendMessage, subscribeToMessage, subscribeToUserChats } from "../services/chatService";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { ChatScreenModal } from "../components/ChatScreen";
+import useChatListHook from "../hooks/useChatListHook";
 
 
 export default function ChatList() {
-    const context = useContext(GlobalContextApi);
-    const { user } = useContext(AuthContext);
-    const navigation = useNavigation();
-    const [chatRoomId, setChatRoomId] = useState("");
-    const [loading, setLoading] = useState(true);
-    const [otherUser, setOtherUser] = useState<any>("");
-    const [messages, setMessages] = useState<IMessage[]>([]);
-    if (!context) return null;
-    const { width } = useWindowDimensions();
-    const inputWidth = width / 1.5;
-    const { usersForChat, setUsersForChat, currentUser, darkMode } = context;
-    const [chatRooms, setChatRooms] = useState<UserChat[]>([]);
-    const [visible, setVisible] = useState(false);
-    const ChatScreenModalPopUp = () => {
-        setVisible(true);
+    const hooks = useChatListHook();
+    if (!hooks) {
+        return;
     }
-    const ChatScreenModalPopOut = () => {
-        setVisible(false);
-    }
-    useEffect(() => {
-        if (!user?.uid) return;
-
-        GetAllUSerForChat(user.uid, setUsersForChat);
-    }, [user]);
-
-    useEffect(() => {
-        if (!user?.uid) return;
-        const unsub = subscribeToUserChats(user.uid, setChatRooms);
-        return () => unsub();
-    }, [user])
-    useEffect(() => {
-        setTimeout(() => {
-            setLoading(false);
-        }, 2000)
-    }, [])
-
-    const HandleCreateNewChatRoom = async (otherUser: any) => {
-        if (!user?.uid) {
-            return;
-        }
-        const user1 = {
-            displayName: `${currentUser?.firstName} ${currentUser?.lastName}`,
-            photoUrl: currentUser?.image
-        }
-        const user2 = {
-            displayName: `${otherUser?.firstName} ${otherUser?.lastName}`,
-            photoUrl: otherUser?.image
-        }
-        const Id = await getOrCreateChatRoom(user.uid, otherUser.uid, user1, user2);
-        setChatRoomId(Id);
-    }
-
-    useEffect(() => {
-        if (!chatRoomId) return;
-
-        const unsubscribe = subscribeToMessage(chatRoomId, (msgs) => {
-            const formattedMessages: IMessage[] = msgs.map((msg) => ({
-                _id: msg._id,
-                text: msg.text,
-                createdAt: msg.createdAt,
-                user: {
-                    _id: msg.user._id,
-                    name: msg.user.name,
-                    avatar: msg.user.avatar,
-                },
-            }));
-            setMessages(formattedMessages);
-        });
-
-        return () => unsubscribe();
-    }, [chatRoomId]);
-    const handleSend = useCallback(
-        async (newMessages: IMessage[] = []) => {
-            const msg = newMessages[0];
-            if (!msg) return;
-            if (!user?.uid) {
-                return;
-            }
-            try {
-                await sendMessage(chatRoomId, {
-                    text: msg.text,
-                    createdAt: new Date(),
-                    user: {
-                        _id: user?.uid,
-                        name: `${currentUser?.firstName} ${currentUser?.lastName}`,
-                        avatar: currentUser?.image,
-                    },
-                    chatRoomId: chatRoomId,
-                });
-            } catch (error) {
-                console.error("Failed to send message", error);
-            }
-        },
-        [chatRoomId, user, currentUser]
-    );
+    const { user, chatRoomId, navigation, setChatRoomId, loading, setLoading, otherUser, setOtherUser, messages, setMessages, width, inputWidth, usersForChat, setUsersForChat, currentUser, darkMode,
+        chatRooms, setChatRooms, visible, setVisible, ChatScreenModalPopUp, ChatScreenModalPopOut, HandleCreateNewChatRoom, handleSend } = hooks
 
     return (
         <SafeAreaView className={darkMode ? "flex-1 bg-[rgb(18,18,18)]" : "flex-1 bg-white"}>
@@ -119,7 +23,7 @@ export default function ChatList() {
                         </View>
                     ) : (
                         <View>
-                            <View className="relative h-[60px] w-full justify-center mb-[20px]">
+                            <View className="relative h-[70px] w-full justify-center ">
                                 <TouchableOpacity className="absolute left-4 z-10 px-[5px]" onPress={() => navigation.goBack()}>
                                     <Ionicons name="chevron-back" size={24} color={darkMode ? 'white' : "black"} />
                                 </TouchableOpacity>
@@ -130,12 +34,14 @@ export default function ChatList() {
                                 </View>
                             </View>
                             <ScrollView className="h-[100%]" showsVerticalScrollIndicator={false}>
+                                <Text className={darkMode ? "font-[Poppins-SemiBold] text-[white] text-[18px] py-[15px] px-[5px]" : "font-[Poppins-SemiBold] text-[18px] py-[15px] px-[5px]"}>Available User</Text>
                                 <FlatList
                                     data={usersForChat}
                                     keyExtractor={(item, index) => item.uid.toString() + index}
                                     horizontal
+                                    showsHorizontalScrollIndicator={false}
                                     renderItem={({ item }) => (
-                                        <TouchableOpacity className="mb-4 mr-[10px] justify-center items-center gap-[10]" onPress={() => { setOtherUser(item); HandleCreateNewChatRoom(item); ChatScreenModalPopUp() }}>
+                                        <TouchableOpacity className="mb-4 mr-[10px] justify-center items-center gap-[10] px-[5px]" onPress={() => { setOtherUser(item); HandleCreateNewChatRoom(item); ChatScreenModalPopUp() }}>
                                             <Image
                                                 source={{ uri: item.image }}
                                                 resizeMode="cover"
@@ -157,7 +63,8 @@ export default function ChatList() {
                                             <Text className={darkMode ? "text-[14px] font-[Poppins-Medium] text-[white]" : "text-[14px] font-[Poppins-Medium]"}>No chat available</Text>
                                         </View>
                                     ) : (
-                                        <View className="mt-[20px]">
+                                        <View className="mt-[0px] px-[5px]">
+                                            <Text className={darkMode ? "font-[Poppins-SemiBold] text-[white] text-[18px] py-[15px]" : "font-[Poppins-SemiBold] text-[18px] pt-[15px] pb-[20px]"}>Your messages</Text>
                                             {
                                                 chatRooms.map((item, index) => {
                                                     return (
@@ -170,7 +77,7 @@ export default function ChatList() {
                                                                         firstName: item.otherUserName.split(' ')[0],
                                                                         lastName: item.otherUserName.split(' ')[1] || '',
                                                                         image: item.otherUserPhoto,
-                                                                        uid: item.otherUserId, // optional, if you need it
+                                                                        uid: item.otherUserId,
                                                                     });
                                                                     HandleCreateNewChatRoom({
                                                                         uid: item.otherUserId,
@@ -214,7 +121,7 @@ export default function ChatList() {
                                     )
                                 }
                             </ScrollView>
-                            <ChatScreenModal visible={visible} inputWidth={inputWidth} messages={messages} ChatScreenModalPopOut={ChatScreenModalPopOut} otherUser={otherUser} handleSend={handleSend} currentUser={currentUser} user={user} />
+                            <ChatScreenModal darkMode={darkMode} visible={visible} inputWidth={inputWidth} messages={messages} ChatScreenModalPopOut={ChatScreenModalPopOut} otherUser={otherUser} handleSend={handleSend} currentUser={currentUser} user={user} />
 
                         </View>
                     )

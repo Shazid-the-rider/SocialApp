@@ -67,10 +67,10 @@ export default function SettingPageComponents({ HandleLogOut }: Props) {
                         <Text className={darkMode ? "text-[13px] text-[rgba(203,203,203,0.71)] font-[Poppins-SemiBold]" : "text-[13px] text-[rgba(73,73,73,0.53)] font-[Poppins-SemiBold]"}>Email</Text>
                         <Text className={darkMode ? "text-[13px] text-white font-[Poppins-SemiBold]" : "text-[13px] text-black font-[Poppins-SemiBold]"}>{currentUser?.email}</Text>
                     </View>
-                    <TouchableOpacity style={[styles.view, { padding: 12, borderRadius: 7, alignItems: 'center', backgroundColor: darkMode ? 'rgb(32,32,32,1)' : 'rgba(236, 235, 235, 0.29)', borderColor: darkMode ? 'black' : 'rgba(225, 225, 225, 0.88)' }]} activeOpacity={.6}
+                    <TouchableOpacity style={[styles.view, { padding: 12, borderRadius: 30, alignItems: 'center', backgroundColor: darkMode ? 'rgb(32,32,32,1)' : 'black', borderColor: darkMode ? 'black' : 'rgba(225, 225, 225, 0.88)' }]} activeOpacity={.6}
                         onPress={() => navigation.navigate('Profile' as never)}
                     >
-                        <Text className={darkMode ? "text-[16px] text-white font-[Poppins-SemiBold]" : "text-[16px] text-black font-[Poppins-SemiBold]"}>Edit profile</Text>
+                        <Text className={darkMode ? "text-[15px] text-white font-[Poppins-SemiBold]" : "text-[15px] text-white font-[Poppins-SemiBold]"}>Edit profile</Text>
                     </TouchableOpacity>
                 </Animated.View>
 

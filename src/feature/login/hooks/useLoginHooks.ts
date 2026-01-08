@@ -7,6 +7,7 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "fire
 import { auth } from "../../../../shared/services/firebaseConfig";
 import { GlobalContextApi } from "../../../../context/GlobalContext";
 import { AuthContext } from "../../../../context/AuthContext";
+import { showErrorToast, showSuccessToast } from "../../../../shared/utils/toast";
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -32,37 +33,20 @@ export default function useLoginHooks() {
         return null;
     }
     const { newUser, setNewUser, actionlog, toggleAction } = context;
-    const popup = useRef(new Animated.Value(-height)).current;
-    useEffect(() => {
-        setTimeout(() => {
-            if (actionlog === 'login') {
-                navigation.navigate('Bottom' as never)
-            }
-            if (actionlog === 'signup') {
-                navigation.navigate('SetupUserinfo' as never)
-            }
-        }, 4000)
 
-    }, [actionlog])
+    /* useEffect(() => {
+         setTimeout(() => {
+             if (actionlog === 'login') {
+                 navigation.navigate('Bottom' as never)
+             }
+             if (actionlog === 'signup') {
+                 navigation.navigate('SetupUserinfo' as never)
+             }
+         }, 4000)
+ 
+     }, [actionlog])*/
     //Animation success
-    const popout = () => {
-        return Animated.timing(popup, {
-            toValue: -height,
-            duration: 500,
-            useNativeDriver: false
-        }).start()
-    }
-    const popupAnim = () => {
-        return Animated.timing(popup, {
-            toValue: 20,
-            duration: 500,
-            useNativeDriver: false
-        }).start(() => {
-            setTimeout(() => {
-                popout();
-            }, 2000)
-        })
-    }
+
 
     //email validation
     const CheckEmailValidation = (email: string): boolean => {
@@ -204,36 +188,12 @@ export default function useLoginHooks() {
                 setEmail("");
                 setPassword("");
                 setcPassword("");
-                popupAnim();
+                showSuccessToast('Registration successfull')
 
             } catch (error: any) {
                 const errorCode = error?.code || "";
                 const errorMessage = getErrorMessageSignup(errorCode);
-                if (errorCode === "auth/email-already-in-use" || errorCode === "auth/invalid-email") {
-                    setemailError(errorCode);
-                    setEmail("");
-                    setPassword("");
-                    setcPassword("");
-                    const interval = setTimeout(() => {
-                        setemailError("");
-                    }, 3000)
-                    return () => clearInterval(interval)
-                }
-                else if (errorCode === "auth/weak-password") {
-                    setpasswordError(errorCode)
-                    setcpasswordError(errorCode)
-                    setPassword("");
-                    setcPassword("");
-                    const interval = setTimeout(() => {
-                        setpasswordError("");
-                        setcpasswordError("");
-                    }, 3000)
-                    return () => clearInterval(interval)
-                }
-                else {
-                    setSuccess(errorMessage);
-                    popupAnim();
-                }
+                showErrorToast(errorMessage)
             }
         }
 
@@ -288,64 +248,20 @@ export default function useLoginHooks() {
 
         if (password.trim() !== "" && email.trim() !== "" && CheckEmailValidation(email)) {
             try {
-                toggleAction('login');
                 await signInWithEmailAndPassword(auth, email, password);
-                setSuccess("Login successful")
-                popupAnim();
+                toggleAction('login');
+                showSuccessToast('Login successfull')
             } catch (error: any) {
-                const errorCode = error?.code || "";
-                const errorMessage = getErrorMessageLogin(errorCode);
-                if (errorCode === "auth/invalid-credential") {
-                    setpasswordError(errorMessage);
-                    setemailError(errorMessage);
-                    setPassword("");
-                    setEmail("");
-                    const interval = setTimeout(() => {
-                        setpasswordError("");
-                        setemailError("");
-                    }, 3000)
-                    return () => clearInterval(interval)
-
-                }
-                else if (errorCode === "auth/user-not-found") {
-                    setemailError(errorMessage);
-                    setpasswordError(errorMessage);
-                    setEmail("");
-                    setPassword("");
-                    const interval = setTimeout(() => {
-                        setemailError("");
-                    }, 3000)
-                    return () => clearInterval(interval)
-                }
-                else if (errorCode === "auth/wrong-password") {
-                    setpasswordError(errorMessage);
-                    setPassword("");
-                    const interval = setTimeout(() => {
-                        setpasswordError("");
-                    }, 3000)
-                    return () => clearInterval(interval)
-                }
-                else if (errorCode === "auth/invalid-email") {
-                    setemailError(errorMessage);
-                    setEmail("");
-                    const interval = setTimeout(() => {
-                        setemailError("");
-                    }, 3000)
-                    return () => clearInterval(interval)
-                }
-                else {
-                    Alert.alert("Login Error", errorMessage);
-                }
-
+                const errorMessage = getErrorMessageLogin(error.code);
+                showErrorToast(errorMessage)
             }
         }
 
     }
 
-
     return {
         email, password, cpassword, success, navigation, action, visible, loginOption, fonts, emailError, cpasswordError, passwordError, submitLogin,
-        popup, RequestSignUp, setEmail, setPassword, setcPassword, setAction, setVisible, setLoginOption, setemailError, setcpasswordError, setpasswordError,
+        RequestSignUp, setEmail, setPassword, setcPassword, setAction, setVisible, setLoginOption, setemailError, setcpasswordError, setpasswordError,
         RequestLogin
     }
 
