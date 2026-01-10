@@ -20,9 +20,9 @@ export default function LoginTheme() {
     if (!context) {
         return null;
     }
-    const { email, password, cpassword, success, navigation, action, visible, loginOption, fonts, emailError, cpasswordError, passwordError, submitLogin,
+    const { email, getPasswordStrength, password, cpassword, isSignupDisabled, success, navigation, action, visible, loginOption, fonts, emailError, cpasswordError, passwordError, submitLogin,
         RequestSignUp, setEmail, setPassword, setcPassword, setAction, setVisible, setLoginOption, setemailError, setcpasswordError, setpasswordError,
-        RequestLogin } = context;
+        RequestLogin, passwordStrength } = context;
 
     const TextAnim1 = useRef(new Animated.Value(.4)).current;
     const ViewAnim = useRef(new Animated.Value(0)).current;
@@ -106,6 +106,19 @@ export default function LoginTheme() {
                                     )
                                 }
                             </Animated.View>
+                            {(passwordStrength && action === 'signup') && (
+                                <Text
+                                    style={{
+                                        marginTop: 4,
+                                        marginLeft: 5,
+                                        fontFamily: 'Poppins-Medium',
+                                        fontSize: 12,
+                                        color: passwordStrength.color
+                                    }}
+                                >
+                                    Password strength: {passwordStrength.label}
+                                </Text>
+                            )}
 
                             {
                                 action === 'signup' && (
@@ -115,6 +128,7 @@ export default function LoginTheme() {
                                             onChangeText={(text) => setcPassword(text)}
                                             value={cpassword}
                                         />
+
                                         {
                                             (cpassword !== "" && cpasswordError === "") && (
                                                 <TouchableOpacity className="absolute top-['50%'] right-2.5 translate-y-['-50%']" onPress={() => setVisible((prev) => prev === true ? false : true)}>
@@ -130,6 +144,7 @@ export default function LoginTheme() {
                                             )
                                         }
                                     </Animated.View>
+
                                 )
                             }
 
@@ -143,7 +158,7 @@ export default function LoginTheme() {
                             }
 
                             {/*BUTTON LOGIN SIGNUP*/}
-                            <TouchableOpacity className="h-[50px] mt-[10px] bg-black rounded-[30px] flex justify-center items-center" style={{ width: width / 1.15 }} activeOpacity={.7}
+                            <TouchableOpacity className="h-[50px] mt-[10px] bg-black rounded-[30px] flex justify-center items-center" style={{ width: width / 1.15, opacity: (action === 'signup' && isSignupDisabled) ? .5 : 1 }} activeOpacity={.7}
                                 onPress={() => {
                                     if (action === 'signup') {
                                         Keyboard.dismiss()
@@ -153,16 +168,18 @@ export default function LoginTheme() {
                                         Keyboard.dismiss();
                                         RequestLogin();
                                     }
-                                }}>
+                                }}
+                                disabled={isSignupDisabled}
+                            >
                                 <Text style={{ fontFamily: 'Poppins-Medium', fontSize: 16, color: 'white' }}>{action === 'login' ? 'Login' : 'Signup'}</Text>
                             </TouchableOpacity>
                             {
                                 action === 'login' ? (
-                                    <TouchableOpacity className="items-center" activeOpacity={.6} onPress={() => { Keyboard.dismiss(); setAction('signup') }}>
+                                    <TouchableOpacity className="items-center" activeOpacity={.6} onPress={() => { Keyboard.dismiss(); setAction('signup'); setPassword(""); setcPassword("") }}>
                                         <Animated.Text className="text-[14px] font-[Poppins-Medium]">Don't have an account? <Text className="font-[Poppins-SemiBold]">Sign up</Text></Animated.Text>
                                     </TouchableOpacity>
                                 ) : (
-                                    <TouchableOpacity className="items-center" onPress={() => { Keyboard.dismiss(); setAction('login') }}>
+                                    <TouchableOpacity className="items-center" onPress={() => { Keyboard.dismiss(); setAction('login'); setPassword(""); setcPassword("") }}>
                                         <Animated.Text className="text-[14px] font-[Poppins-Medium]">Already have an account? <Text className="font-[Poppins-SemiBold]">Sign in</Text></Animated.Text>
                                     </TouchableOpacity>
                                 )

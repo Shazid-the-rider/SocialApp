@@ -34,18 +34,30 @@ export default function useLoginHooks() {
     }
     const { newUser, setNewUser, actionlog, toggleAction } = context;
 
-    /* useEffect(() => {
-         setTimeout(() => {
-             if (actionlog === 'login') {
-                 navigation.navigate('Bottom' as never)
-             }
-             if (actionlog === 'signup') {
-                 navigation.navigate('SetupUserinfo' as never)
-             }
-         }, 4000)
- 
-     }, [actionlog])*/
-    //Animation success
+    //button opacity and disabled for signup
+    const isSignupDisabled =
+        action === 'signup' &&
+        (
+            password.trim() === "" ||
+            cpassword.trim() === "" ||
+            password !== cpassword
+        );
+    // password strength check:
+    const getPasswordStrength = (password: any) => {
+        if (password.length < 6) return null;
+        const hasLetter = /[A-Za-z]/.test(password);
+        const hasNumber = /\d/.test(password);
+        const hasSymbol = /[^A-Za-z0-9]/.test(password);
+        if (password.length >= 10 && hasLetter && hasNumber && hasSymbol) {
+            return { label: 'Strong', color: '#16a34a' };
+        }
+        if (password.length >= 8 && hasLetter && hasNumber) {
+            return { label: 'Medium', color: '#f59e0b' };
+        }
+        return { label: 'Weak', color: '#dc2626' };
+    };
+
+    const passwordStrength = getPasswordStrength(password);
 
 
     //email validation
@@ -262,7 +274,7 @@ export default function useLoginHooks() {
     return {
         email, password, cpassword, success, navigation, action, visible, loginOption, fonts, emailError, cpasswordError, passwordError, submitLogin,
         RequestSignUp, setEmail, setPassword, setcPassword, setAction, setVisible, setLoginOption, setemailError, setcpasswordError, setpasswordError,
-        RequestLogin
+        RequestLogin, isSignupDisabled,getPasswordStrength,passwordStrength
     }
 
 }

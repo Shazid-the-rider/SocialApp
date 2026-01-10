@@ -24,7 +24,7 @@ export default function ProfileScreen() {
     }
 
     const { userBio, commentSheetModalPopUp, updatePost, darkMode, postType, setPostType, selectedImage, setSelectedImage, des, setDes, selectedImageUrl, setSelectedImageUrl, status,
-        setType, message, focus, setFocus, posts, viewImage, setViewImage, notify,
+        setType, focus, setFocus, posts, viewImage, setViewImage, notify,UpdateName,
         currentUser, likedPost, LikePosts, user,
         PickFile, UploadPost, postUid, setPostUid, selectedPost, setSelectedPost, HandlePostDelete,
         currentStatus, setCurrentStatus, PostModalPopUp, PostModalPopOut, createPostModal, EditProfileModalPopUp, EditProfileModalPopOut, editProfileModal,
@@ -41,8 +41,8 @@ export default function ProfileScreen() {
                         <PostButton postType={postType} setPostType={setPostType} darkMode={darkMode} />
                         <PostView user={user} commentSheetModalPopUp={commentSheetModalPopUp} darkMode={darkMode} LikePosts={LikePosts} likedPost={likedPost} OptionModalPopUp={OptionModalPopUp} EditViewImageModalPopUp={EditViewImageModalPopUp} EditPostModalPopUp={EditPostModalPopUp} setCurrentStatus={setCurrentStatus} currentUser={currentUser} HandlePostDelete={HandlePostDelete} posts={posts} setSelectedPost={setSelectedPost} setViewImage={setViewImage} selectedImageUrl={selectedImageUrl} setSelectedImageUrl={setSelectedImageUrl} setPostUid={setPostUid} />
                     </ScrollView>
-                    <EditProfileSheet userBio={userBio} darkMode={darkMode} editProfileModal={editProfileModal} EditProfileModalPopOut={EditProfileModalPopOut} />
-                    <CreatePostSheet darkMode={darkMode} createPostModal={createPostModal} PostModalPopOut={PostModalPopOut} currentUser={currentUser} status={status} message={message} notify={notify} focus={focus} UploadPost={UploadPost} setDes={setDes} setFocus={setFocus} selectedImage={selectedImage} setSelectedImage={setSelectedImage} postType={postType} setType={setType} PickFile={PickFile} des={des} />
+                    <EditProfileSheet UpdateName={UpdateName} userBio={userBio} darkMode={darkMode} editProfileModal={editProfileModal} EditProfileModalPopOut={EditProfileModalPopOut} />
+                    <CreatePostSheet darkMode={darkMode} createPostModal={createPostModal} PostModalPopOut={PostModalPopOut} currentUser={currentUser} status={status} notify={notify} focus={focus} UploadPost={UploadPost} setDes={setDes} setFocus={setFocus} selectedImage={selectedImage} setSelectedImage={setSelectedImage} postType={postType} setType={setType} PickFile={PickFile} des={des} />
                     <EditViewImage updatePost={updatePost} darkMode={darkMode} viewImage={viewImage} setViewImage={setViewImage} selectedPost={selectedPost} HandlePostDelete={HandlePostDelete} editViewImageModal={editViewImageModal} EditViewImageModalPopOut={EditViewImageModalPopOut} />
                     <EditPostStatusSheet postUid={postUid} updatePost={updatePost} darkMode={darkMode} currentUser={currentUser} currentStatus={currentStatus} setCurrentStatus={setCurrentStatus} editPostModal={editPostModal} EditPostModalPopOut={EditPostModalPopOut} />
                     <PostOptionModal darkMode={darkMode} HandlePostDelete={HandlePostDelete} postUid={postUid} optionModal={optionModal} OptionModalPopOut={OptionModalPopOut} EditPostModalPopUp={EditPostModalPopUp} />

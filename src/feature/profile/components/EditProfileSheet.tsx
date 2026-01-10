@@ -1,11 +1,26 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-type Props = { editProfileModal: boolean; EditProfileModalPopOut: () => void, darkMode: boolean, userBio: (val: string) => void };
-export const EditProfileSheet = React.memo(({ userBio, darkMode, editProfileModal, EditProfileModalPopOut }: Props) => {
+type Props = { editProfileModal: boolean; EditProfileModalPopOut: () => void, darkMode: boolean, userBio: (val: string) => void, UpdateName: (val: string, val2: string) => Promise<void> };
+export const EditProfileSheet = React.memo(({ UpdateName, userBio, darkMode, editProfileModal, EditProfileModalPopOut }: Props) => {
 
     const [text, setText] = useState("");
-    //rgba(236, 235, 235, 0.29)
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+
+    const nameRegex = /^[A-Za-z]{2,}$/;
+
+    const isFirstNameValid = nameRegex.test(firstName.trim());
+    const isLastNameValid = nameRegex.test(lastName.trim());
+    const isNameValid = isFirstNameValid && isLastNameValid;
+
+    const HandleClear = () => {
+        setFirstName("");
+        setLastName("");
+        setText("");
+    }
+
+
     return (
         <Modal
             visible={editProfileModal}
@@ -14,7 +29,7 @@ export const EditProfileSheet = React.memo(({ userBio, darkMode, editProfileModa
             onRequestClose={EditProfileModalPopOut}
         >
             <View className={darkMode ? " absolute h-[100%] w-[100%] bg-[rgb(18,18,18)] pt-[20px] z-40" : " absolute h-[100%] w-[100%] bg-white pt-[20px] z-40"} >
-                <TouchableOpacity className="flex-row items-center h-[70px] pl-[10px]" activeOpacity={0.6} onPress={() => EditProfileModalPopOut()}>
+                <TouchableOpacity className="flex-row items-center h-[70px] w-[150px] pl-[10px]" activeOpacity={0.6} onPress={() => { EditProfileModalPopOut(); HandleClear() }}>
                     <Ionicons name="chevron-back" size={24} color={darkMode ? 'white' : "black"} />
                     <Text className={darkMode ? "text-[15px] text-[white]" : "text-[15px]"} style={{ fontFamily: 'Poppins-Medium' }}>Back to home</Text>
                 </TouchableOpacity>
@@ -23,22 +38,33 @@ export const EditProfileSheet = React.memo(({ userBio, darkMode, editProfileModa
                         <Text className={darkMode ? "font-[Poppins-Semibold] text-[white] text-[25px]" : "font-[Poppins-Semibold] text-[25px]"}>Edit</Text>
                         <Text className={darkMode ? "text-[15px] text-[rgba(186,186,186,0.53)] font-[Poppins-Medium]" : "text-[15px] text-[rgba(73,73,73,0.53)] font-[Poppins-Medium]"}>Edit your information</Text>
                     </View>
-                    <View className="gap-[10px] mb-[40px]">
-                        <Text className={darkMode ? "text-[16px] text-[white] font-[Poppins-SemiBold]" : "text-[16px] font-[Poppins-SemiBold]"} >Edit Bio</Text>
+                    <View className="gap-[2px] mb-[40px]">
+                        <Text style={{ marginBottom: 14 }} className={darkMode ? "text-[16px] text-[white] font-[Poppins-SemiBold]" : "text-[16px] font-[Poppins-SemiBold]"} >Edit Bio</Text>
+                        <Text className={darkMode ? "text-[11px] text-[white] font-[Poppins-Medium]" : "text-[11px] font-[Poppins-Medium]"} style={{ color: darkMode ? text.length === 160 ? 'red' : 'white' : text.length === 160 ? 'red' : 'black' }}>{text.length}{` / ${160}`}</Text>
                         <TextInput placeholder="Write your bio" placeholderTextColor={'rgb(190,190,190)'} className={darkMode ? "text-[14px] text-[white] font-[Poppins-Medium] py-[15px] bg-[rgba(42,41,41,0.53)]  px-[10px]" : "text-[14px] font-[Poppins-Medium] py-[15px] border-2 border-gray-200 px-[10px] rounded-xl"} style={{ borderRadius: 5 }}
-                            value={text} onChangeText={(q) => setText(q)}
+                            value={text} onChangeText={(q) => setText(q)} maxLength={160}
                         />
-                        <TouchableOpacity style={[styles.view, { padding: 12, borderRadius: 7, alignItems: 'center', borderColor: darkMode ? 'rgba(100, 100, 100, 0.88)' : 'rgba(225, 225, 225, 0.88)', borderWidth: darkMode ? 0 : 1, backgroundColor: darkMode ? 'black' : 'black' }]} activeOpacity={.6}
-                            disabled={text.trim().length === 0 || text.trim().length >= 50} onPress={() => { userBio(text); setText(""); EditProfileModalPopOut() }}
+                        <TouchableOpacity style={[styles.view, { padding: 12, marginTop: 10, borderRadius: 7, alignItems: 'center', borderColor: darkMode ? 'rgba(100, 100, 100, 0.88)' : 'rgba(225, 225, 225, 0.88)', borderWidth: darkMode ? 0 : 1, backgroundColor: darkMode ? 'black' : 'black' }]} activeOpacity={.6}
+                            disabled={text.trim().length === 0 || text.trim().length >= 50} onPress={() => { userBio(text); setText(""); EditProfileModalPopOut(); HandleClear() }}
                         >
                             <Text className={darkMode ? "text-[14px] text-white font-[Poppins-Medium]" : "text-[14px] text-white font-[Poppins-Medium]"}>Edit Bio</Text>
                         </TouchableOpacity>
                     </View>
                     <View className="gap-[10px] mb-[40px]">
                         <Text className={darkMode ? "text-[16px] text-[white] font-[Poppins-SemiBold]" : "text-[16px] font-[Poppins-SemiBold]"}>Change Name</Text>
-                        <TextInput placeholder="First Name" placeholderTextColor={'rgb(190,190,190)'} className={darkMode ? "text-[14px] text-[white] font-[Poppins-Medium] py-[15px] bg-[rgba(42,41,41,0.53)]  px-[10px] rounded-xl" : "text-[14px] font-[Poppins-Medium] py-[15px] border-2 border-gray-200 px-[10px] rounded-xl"} style={{ borderRadius: 5 }} />
-                        <TextInput placeholder="Last Name" placeholderTextColor={'rgb(190,190,190)'} className={darkMode ? "text-[14px] text-[white] font-[Poppins-Medium] py-[15px] bg-[rgba(42,41,41,0.53)]  px-[10px] rounded-xl" : "text-[14px] font-[Poppins-Medium] py-[15px] border-2 border-gray-200 px-[10px] rounded-xl"} style={{ borderRadius: 5 }} />
-                        <TouchableOpacity style={[styles.view, { padding: 12, borderRadius: 7, alignItems: 'center', borderColor: darkMode ? 'rgba(100, 100, 100, 0.88)' : 'rgba(225, 225, 225, 0.88)', borderWidth: darkMode ? 0 : 1, backgroundColor: darkMode ? 'black' : 'black' }]} activeOpacity={.6}>
+                        <TextInput value={firstName} placeholder="First Name" placeholderTextColor={'rgb(190,190,190)'} className={darkMode ? "text-[14px] text-[white] font-[Poppins-Medium] py-[15px] bg-[rgba(42,41,41,0.53)]  px-[10px] rounded-xl" : "text-[14px] font-[Poppins-Medium] py-[15px] border-2 border-gray-200 px-[10px] rounded-xl"} style={{
+                            borderRadius: 5,
+                            borderColor:
+                                firstName.length > 0 && !isFirstNameValid ? 'rgb(200,100,0)' : '#e5e7eb',
+                        }}
+                            onChangeText={(text) => setFirstName(text)} />
+                        <TextInput value={lastName} placeholder="Last Name" placeholderTextColor={'rgb(190,190,190)'} className={darkMode ? "text-[14px] text-[white] font-[Poppins-Medium] py-[15px] bg-[rgba(42,41,41,0.53)]  px-[10px] rounded-xl" : "text-[14px] font-[Poppins-Medium] py-[15px] border-2 border-gray-200 px-[10px] rounded-xl"} style={{
+                            borderRadius: 5,
+                            borderColor:
+                                lastName.length > 0 && !isLastNameValid ? 'rgb(200,100,0)' : '#e5e7eb',
+                        }}
+                            onChangeText={(text) => setLastName(text)} />
+                        <TouchableOpacity style={[styles.view, { padding: 12, borderRadius: 7, opacity: isNameValid ? 1 : .5, alignItems: 'center', borderColor: darkMode ? 'rgba(100, 100, 100, 0.88)' : 'rgba(225, 225, 225, 0.88)', borderWidth: darkMode ? 0 : 1, backgroundColor: darkMode ? 'black' : 'black' }]} activeOpacity={.6} disabled={!isNameValid} onPress={() => { UpdateName(firstName, lastName); EditProfileModalPopOut(); HandleClear() }}>
                             <Text className={darkMode ? "text-[14px] text-white font-[Poppins-Medium]" : "text-[14px] text-white font-[Poppins-Medium]"}>Change Name</Text>
                         </TouchableOpacity>
                     </View>

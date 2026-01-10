@@ -96,7 +96,7 @@ export default function useProfileHooks() {
 
 
 
-    
+
     const PostModalPopUp = () => {
         setCreatePostModal(true);
     }
@@ -211,7 +211,7 @@ export default function useProfileHooks() {
     if (!context) {
         return null;
     }
-    const { currentUser, likedPost, LikePosts, darkMode, updatePost,commentSheetModalPopUp ,userBio} = context;
+    const { currentUser, likedPost, LikePosts, darkMode, updatePost, commentSheetModalPopUp, userBio } = context;
 
     //Delete post from social Media 
 
@@ -233,7 +233,24 @@ export default function useProfileHooks() {
         });
         showSuccessToast('Successfully post deleted')
     }
-
+    //UpdateName:
+    const UpdateName = async (firstName: string, lastName: string) => {
+        if (!user) {
+            return;
+        }
+        const net = await NetInfo.fetch()
+        if (!net.isConnected) {
+            setStatus(false);
+            showErrorToast('No internet connection')
+            return;
+        }
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, {
+            firstName: firstName,
+            lastName: lastName,
+        });
+        showSuccessToast('Successfully name updated')
+    }
     return {
 
         commentSheetModalPopUp, updatePost, darkMode, user, postType, setPostType, selectedImage, setSelectedImage, des, setDes, selectedImageUrl, setSelectedImageUrl, status, setStatus,
@@ -241,7 +258,7 @@ export default function useProfileHooks() {
         currentUser, PickFile, UploadPost, postUid, setPostUid, selectedPost, setSelectedPost, HandlePostDelete, EditPostAnim,
         currentStatus, setCurrentStatus, PostModalPopUp, PostModalPopOut, createPostModal, EditProfileModalPopUp, EditProfileModalPopOut,
         editProfileModal, editPostModal, EditPostModalPopUp, EditPostModalPopOut, editViewImageModal, EditViewImageModalPopOut, EditViewImageModalPopUp,
-        optionModal, OptionModalPopUp, OptionModalPopOut, likedPost, LikePosts,userBio
+        optionModal, OptionModalPopUp, OptionModalPopOut, likedPost, LikePosts, userBio, UpdateName
     }
 
 }

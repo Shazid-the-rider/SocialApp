@@ -288,6 +288,7 @@ export const Search_UserInfo_Query = (userid: any, unsubscribeUserRef: any, setS
 export const Update_Bio = async (text: string, user: any) => {
   const UserRef = doc(db, 'users', user.uid);
   await updateDoc(UserRef, { bio: text });
+  showSuccessToast('Bio successfully updated')
 }
 
 //Like Person's comment:
